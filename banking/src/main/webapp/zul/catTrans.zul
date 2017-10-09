@@ -1,0 +1,108 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('viewmodel.CatTransVM')">
+		<vlayout>
+			<vlayout visible="@bind(vm.adding)">
+				<hlayout>
+					<button label="List" onClick="@command('list')" />
+					<button label="Insert" onClick="@command('insert')" />
+				</hlayout>
+				<grid>
+					<columns>
+						<column width="200px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<label value="Name" />
+							<textbox
+								value="@bind(vm.bankTransaction.who)" />
+						</row>
+						<row>
+							<label value="Fin Year" />
+							<intbox
+								value="@bind(vm.bankTransaction.fye)" />
+						</row>
+						<row>
+							<label value="Bank" />
+							<textbox
+								value="@bind(vm.bankTransaction.bank)" />
+						</row>
+						<row>
+							<label value="Description" />
+							<textbox
+								value="@bind(vm.bankTransaction.description)" />
+						</row>
+						<row>
+							<label value="Amount" />
+							<decimalbox
+								value="@bind(vm.bankTransaction.amount)" />
+						</row>
+					</rows>
+				</grid>
+			</vlayout>
+			<vlayout visible="@bind(not vm.adding)">
+				<hlayout>
+					<button label="Refresh"
+						onClick="@command('refresh')" />
+					<button label="Add" onClick="@command('add')" />
+				</hlayout>
+				<listbox model="@bind(vm.transactions)" mold="paging"
+					pageSize="10" hflex="max">
+					<listhead>
+						<listheader label="Bank" width="100px" />
+						<listheader label="FYE" width="100px" />
+						<listheader label="Who" width="100px" />
+						<listheader label="When" width="100px" />
+						<listheader label="Description" sort="auto" />
+						<listheader label="Amount" sort="auto"
+							width="100px" />
+						<listheader label="Category" width="200px" />
+					</listhead>
+					<auxhead>
+						<auxheader/>
+						<auxheader />
+						<auxheader>
+							<selectbox model="@bind(vm.whos)"
+								selectedItem="@bind(vm.whoSelected)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader />
+						<auxheader />
+						<auxheader />
+						<auxheader />
+					</auxhead>
+					<template name="model">
+						<listitem height="28px">
+							<listcell label="@load(each.bank)" />
+							<listcell label="@load(each.fye)" />
+							<listcell label="@load(each.who)" />
+							<listcell>
+								<label
+									value="@load(each.when) @converter('formatedDate', format='dd/MM/yyyy')" />
+							</listcell>
+							<listcell label="@load(each.description)" />
+							<listcell label="@load(each.amount)" />
+							<listcell>
+								<button label="Add Category Link"
+									onClick="@command('addCategoryLookup', transaction=each)"
+									visible="@load(empty each.category)" />
+								<label value="@load(each.category)"
+									visible="@load(not empty each.category)" />
+							</listcell>
+						</listitem>
+					</template>
+				</listbox>
+				<hlayout>
+					<label value="Empty transaction categories" />
+					<label value="@load(vm.nullCount)" />
+				</hlayout>
+			</vlayout>
+		</vlayout>
+	</div>
+</zk>

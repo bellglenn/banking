@@ -1,0 +1,38 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('viewmodel.SummaryVM')">
+		<grid id="demoGrid" height="400px" model="@load(vm.model)">
+			<columns menupopup="auto">
+				<column sort="auto(Category)" label="Category"
+					width="150px" />
+				<column sort="auto(Who)" label="Who" hflex="1" />
+				<column sort="auto(FYE)" label="Fye" hflex="1" />
+				<column sort="auto(Amount)" label="Amount" />
+			</columns>
+            <!-- template for group -->
+			<template name="model:group">
+				<group label="@load(each)" />
+			</template>
+            <!-- template for each element in model -->
+			<template name="model">
+				<row>
+					<label value="@load(each.category)" />
+					<label value="@load(each.who)" />
+					<label value="@load(each.fye)" />
+					<label value="@load(each.amount)" />
+				</row>
+			</template>
+            <!-- template for footer -->
+			<template name="model:groupfoot">
+				<groupfoot>
+					<cell colspan="4"
+						style="text-align: right; padding-right: 15px">
+						<label value="groupfoot"
+							style="font-weight:bold;" />
+					</cell>
+				</groupfoot>
+			</template>
+		</grid>
+	</div>
+</zk>

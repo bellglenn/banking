@@ -1,0 +1,63 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('viewmodel.BankStatementVM')">
+		<vlayout>
+			<hlayout>
+				<button label="Refresh" onClick="@command('refresh')" />
+				<button label="Insert Statement" onClick="@command('insertStatement')" visible="@load(not vm.inserting)"/>
+				<button label="Upload Statement" upload="true" visible="@load(vm.inserting)"
+					onUpload="@command('loadStatement', evt=event)" />
+			</hlayout>
+			<vlayout visible="@load(vm.inserting)">
+				<radiogroup id="bank"
+					selectedItem="@bind(vm.bankStatement.bank)" />
+				<grid>
+					<columns>
+						<column width="100px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<radio id="ra1" label="Suncorp"
+								value="Suncorp" radiogroup="bank" />
+							<radio id="ra2" label="ING" value="ING"
+								radiogroup="bank" />
+						</row>
+						<row>
+							<label value="Account Name" />
+							<textbox
+								value="@bind(vm.bankStatement.name)" />
+						</row>
+						<row>
+							<label value="Fin Year End" />
+							<textbox
+								value="@bind(vm.bankStatement.year)" />
+						</row>
+					</rows>
+				</grid>
+			</vlayout>
+			<separator />
+			<listbox model="@bind(vm.statements)" hflex="true"
+				mold="paging" height="200px">
+				<listhead>
+					<listheader label="FYE" />
+					<listheader label="Bank" />
+					<listheader label="Who" />
+					<listheader label="Action" />
+				</listhead>
+				<template name="model">
+					<listitem>
+						<listcell label="@bind(each.fye)" />
+						<listcell label="@bind(each.bank)" />
+						<listcell label="@bind(each.who)" />
+						<listcell>
+							<button label="Delete"
+								onClick="@command('deleteStatement', statement=each)" />
+						</listcell>
+					</listitem>
+				</template>
+			</listbox>
+		</vlayout>
+	</div>
+</zk>

@@ -1,0 +1,72 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('viewmodel.CategoryVM')" width="600px">
+		<vlayout>
+			<vlayout visible="@bind(vm.adding)">
+				<hlayout>
+					<button label="List" onClick="@command('list')" />
+					<button label="Insert" onClick="@command('insert')" />
+				</hlayout>
+				<radiogroup id="usage"
+					selectedItem="@bind(vm.category.usage)" />
+				<grid>
+					<columns>
+						<column width="200px" />
+						<column />
+					</columns>
+					<rows>
+						<row>
+							<label value="Name" />
+							<textbox value="@bind(vm.category.name)" />
+						</row>
+						<row>
+							<label value="Type" />
+							<textbox value="@bind(vm.category.type)" />
+						</row>
+						<row>
+							<label value="Deduction" />
+							<decimalbox
+								value="@bind(vm.category.deduction)" />
+						</row>
+						<row>
+							<radio id="ra1" label="Tax"
+								value="TAX" radiogroup="usage" />
+							<radio id="ra2" label="Budget" value="BUDGET"
+								radiogroup="usage" />
+						</row>
+					</rows>
+				</grid>
+			</vlayout>
+			<vlayout visible="@bind(not vm.adding)">
+				<hlayout>
+					<button label="Add" onClick="@command('add')" />
+					<button label="Refresh"
+						onClick="@command('refresh')" />
+				</hlayout>
+				<listbox model="@bind(vm.categories)" hflex="true"
+					mold="paging" pageSize="10" height="420px">
+					<listhead>
+						<listheader label="Name" />
+						<listheader label="Type" />
+						<listheader label="Deduction" />
+						<listheader label="Usage" />
+						<listheader label="Action" />
+					</listhead>
+					<template name="model">
+						<listitem>
+							<listcell label="@bind(each.name)" />
+							<listcell label="@bind(each.type)" />
+							<listcell label="@bind(each.deduction)" />
+							<listcell label="@bind(each.usage)" />
+							<listcell>
+								<button label="Delete"
+									onClick="@command('delete', category=each)" />
+							</listcell>
+						</listitem>
+					</template>
+				</listbox>
+			</vlayout>
+		</vlayout>
+	</div>
+</zk>

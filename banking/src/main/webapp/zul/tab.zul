@@ -1,0 +1,39 @@
+						<listbox model="@bind(vm.summary)" mold="paging"
+							pageSize="10" height="500px">
+							<listhead>
+								<listheader label="FYE" width="100px" />
+								<listheader label="Who" width="200px" />
+								<listheader label="Category"
+									width="200px" />
+								<listheader label="Type" width="200px" />
+								<listheader label="Amount" width="100px"
+									align="right" />
+							</listhead>
+							<auxhead>
+								<auxheader />
+								<auxheader>
+									<selectbox model="@bind(vm.whos)"
+										selectedItem="@bind(vm.whoSelected)"
+										onSelect="@command('refresh')">
+										<template name="model">
+											<label value="@bind(each)" />
+										</template>
+									</selectbox>
+								</auxheader>
+								<auxheader />
+								<auxheader />
+								<auxheader />
+								<auxheader />
+							</auxhead>
+							<template name="model">
+								<listitem height="28px">
+									<listcell label="@load(each.fye)" />
+									<listcell label="@load(each.who)" />
+									<listcell
+										label="@load(each.category)" />
+									<listcell label="@load(each.type)" />
+									<listcell
+										label="@load(each.amount) @converter('formatedNumber', format='###,##0.00')" />
+								</listitem>
+							</template>
+						</listbox>
