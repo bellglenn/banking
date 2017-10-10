@@ -2,37 +2,64 @@
 <zk>
 	<div apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm') @init('viewmodel.SummaryVM')">
-		<grid id="demoGrid" height="400px" model="@load(vm.model)">
-			<columns menupopup="auto">
-				<column sort="auto(Category)" label="Category"
-					width="150px" />
-				<column sort="auto(Who)" label="Who" hflex="1" />
-				<column sort="auto(FYE)" label="Fye" hflex="1" />
-				<column sort="auto(Amount)" label="Amount" />
-			</columns>
-            <!-- template for group -->
-			<template name="model:group">
-				<group label="@load(each)" />
-			</template>
-            <!-- template for each element in model -->
-			<template name="model">
-				<row>
-					<label value="@load(each.category)" />
-					<label value="@load(each.who)" />
-					<label value="@load(each.fye)" />
-					<label value="@load(each.amount)" />
-				</row>
-			</template>
-            <!-- template for footer -->
-			<template name="model:groupfoot">
-				<groupfoot>
-					<cell colspan="4"
-						style="text-align: right; padding-right: 15px">
-						<label value="groupfoot"
-							style="font-weight:bold;" />
-					</cell>
-				</groupfoot>
-			</template>
-		</grid>
+		<vlayout>
+			<vlayout>
+				<hlayout>
+					<button label="Refresh"
+						onClick="@command('refresh')" />
+					<button label="Clear" onClick="@command('clear')" />
+				</hlayout>
+				<listbox model="@bind(vm.summaries)" mold="paging"
+					pageSize="10" hflex="max">
+					<listhead>
+						<listheader label="Who" width="150px" />
+						<listheader label="Type" width="200px" />
+						<listheader label="Category" width="200px" />
+						<listheader label="Amount" width="100px" />
+						<listheader label="Tax" width="100px" />
+					</listhead>
+					<auxhead>
+						<auxheader>
+							<selectbox model="@bind(vm.whos)"
+								selectedItem="@bind(vm.filter.who)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader>
+							<selectbox model="@bind(vm.types)"
+								selectedItem="@bind(vm.filter.type)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader>
+							<selectbox model="@bind(vm.categories)"
+								selectedItem="@bind(vm.filter.category)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader />
+						<auxheader/>
+					</auxhead>
+					<template name="model">
+						<listitem height="28px">
+							<listcell label="@load(each.who)" />
+							<listcell label="@load(each.type)" />
+							<listcell label="@load(each.category)" />
+							<listcell label="@load(each.amount)" />
+							<listcell label="@load(each.tax)" />
+						</listitem>
+					</template>
+				</listbox>
+			</vlayout>
+		</vlayout>
 	</div>
 </zk>

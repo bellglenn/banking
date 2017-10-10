@@ -5,7 +5,6 @@ public class BankStatementV {
 	private String bank ;
 	private String who;
 	private Integer fye;
-	private String users;
 	
 	public String getBank() {
 		return bank;
@@ -25,11 +24,4 @@ public class BankStatementV {
 	public void setFye(Integer fye) {
 		this.fye = fye;
 	}
-	public String getUsers() {
-		return users;
-	}
-	public void setUsers(String users) {
-		this.users = users;
-	}
-	
 }

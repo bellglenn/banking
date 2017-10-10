@@ -65,7 +65,7 @@
 						<auxheader />
 						<auxheader>
 							<selectbox model="@bind(vm.whos)"
-								selectedItem="@bind(vm.whoSelected)"
+								selectedItem="@bind(vm.filter.who)"
 								onSelect="@command('refresh')">
 								<template name="model">
 									<label value="@bind(each)" />

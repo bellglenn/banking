@@ -3,6 +3,7 @@ package model;
 public class CurrentFyeUsers {
 	private String users;
 	private Integer fye;
+	private String selected;
 	
 	
 	public String getUsers() {
@@ -16,6 +17,12 @@ public class CurrentFyeUsers {
 	}
 	public void setFye(Integer year) {
 		this.fye = year;
+	}
+	public String getSelected() {
+		return selected;
+	}
+	public void setSelected(String selected) {
+		this.selected = selected;
 	}
 	
 	

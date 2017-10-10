@@ -31,8 +31,6 @@ public class BankStatementVM extends BaseVM {
 
 	private BankStatement bankStatement = new BankStatement();
 	private List<BankStatementV> statements = new ArrayList<>();
-	private Integer fye;
-	private String users;
 
 	// NB follow the naming convention to avoid null pointer exceptions
 	@WireVariable
@@ -49,10 +47,8 @@ public class BankStatementVM extends BaseVM {
 
 	@Command
 	public void refresh() throws Exception {
-		fye = currentFyeUsersMapper.findAll().get(0).getFye();
-		users = currentFyeUsersMapper.findAll().get(0).getUsers();
 		statements.clear();
-		statements.addAll(filter(bankTransactionMapper.getBankStatements(fye, users)));
+		statements.addAll(bankTransactionMapper.getBankStatements());
 		inserting = false;
 		BindUtils.postNotifyChange(null, null, this, "statements");
 		BindUtils.postNotifyChange(null, null, this, "inserting");
@@ -69,16 +65,15 @@ public class BankStatementVM extends BaseVM {
 			Messagebox.show("Please select year, name and bank");
 			return;
 		}
-		bankTransactionMapper.deleteStatement(new Integer(statement.getFye()), statement.getWho(), statement.getBank(), users);
+		bankTransactionMapper.deleteStatement(new Integer(statement.getFye()), statement.getWho(), statement.getBank());
 		statements.clear();
-		statements.addAll(bankTransactionMapper.getBankStatements(fye, users));
+		statements.addAll(bankTransactionMapper.getBankStatements());
 	}
 
 	@NotifyChange({"bankStatement", "inserting"})
 	@Command
 	public void insertStatement() throws Exception {
-		bankStatement.setName(users);
-		bankStatement.setYear(fye.toString());
+		bankStatement = new BankStatement();
 		inserting = true;
 	}
 	
@@ -144,7 +139,6 @@ public class BankStatementVM extends BaseVM {
 					bankTransaction.setWho(bankStatement.getName());
 					bankTransaction.setBank(bankStatement.getBank());
 					bankTransaction.setFye(new Integer(bankStatement.getYear()));
-					bankTransaction.setUsers(users);
 					bankStatement.getTransactions().add(bankTransaction);
 				} else {
 					bankStatement.setDescription(bankStatement.getDescription() + Arrays.toString(line) + "\n");
@@ -170,7 +164,6 @@ public class BankStatementVM extends BaseVM {
 					bankTransaction.setWho(bankStatement.getName());
 					bankTransaction.setBank(bankStatement.getBank());
 					bankTransaction.setFye(new Integer(bankStatement.getYear()));
-					bankTransaction.setUsers(users);
 					bankStatement.getTransactions().add(bankTransaction);
 				} else {
 					bankStatement.setDescription(bankStatement.getDescription() + Arrays.toString(line) + "\n");

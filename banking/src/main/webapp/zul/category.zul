@@ -29,12 +29,6 @@
 							<decimalbox
 								value="@bind(vm.category.deduction)" />
 						</row>
-						<row>
-							<radio id="ra1" label="Tax"
-								value="TAX" radiogroup="usage" />
-							<radio id="ra2" label="Budget" value="BUDGET"
-								radiogroup="usage" />
-						</row>
 					</rows>
 				</grid>
 			</vlayout>
@@ -47,18 +41,30 @@
 				<listbox model="@bind(vm.categories)" hflex="true"
 					mold="paging" pageSize="10" height="420px">
 					<listhead>
-						<listheader label="Name" />
 						<listheader label="Type" />
+						<listheader label="Name" />
 						<listheader label="Deduction" />
-						<listheader label="Usage" />
 						<listheader label="Action" />
 					</listhead>
+					<auxhead>
+						<auxheader>
+							<selectbox model="@bind(vm.types)"
+								selectedItem="@bind(vm.filter.type)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader />
+						<auxheader />
+						<auxheader/>
+					</auxhead>
 					<template name="model">
 						<listitem>
-							<listcell label="@bind(each.name)" />
 							<listcell label="@bind(each.type)" />
+							<listcell label="@bind(each.name)" />
 							<listcell label="@bind(each.deduction)" />
-							<listcell label="@bind(each.usage)" />
 							<listcell>
 								<button label="Delete"
 									onClick="@command('delete', category=each)" />

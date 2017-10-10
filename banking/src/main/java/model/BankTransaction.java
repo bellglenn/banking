@@ -12,7 +12,6 @@ public class BankTransaction {
 	private String description;
 	private BigDecimal amount;
 	private Integer fye;
-	private String users;
 
 	public Date getWhen() {
 		return when;
@@ -69,15 +68,5 @@ public class BankTransaction {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	public String getUsers() {
-		return users;
-	}
-
-	public void setUsers(String users) {
-		this.users = users;
-	}
-	
-	
 
 }

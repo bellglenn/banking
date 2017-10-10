@@ -8,7 +8,7 @@ public class Category {
 	private BigDecimal deduction;
 	private String type;
 	private String users;
-	private String usage;
+	private Integer fye;
 	
 	public String getName() {
 		return name;
@@ -34,13 +34,11 @@ public class Category {
 	public void setUsers(String users) {
 		this.users = users;
 	}
-	public String getUsage() {
-		return usage;
+	public Integer getFye() {
+		return fye;
 	}
-	public void setUsage(String usage) {
-		this.usage = usage;
+	public void setFye(Integer fye) {
+		this.fye = fye;
 	}
-	
-	
 
 }

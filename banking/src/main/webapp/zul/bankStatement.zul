@@ -5,9 +5,10 @@
 		<vlayout>
 			<hlayout>
 				<button label="Refresh" onClick="@command('refresh')" />
-				<button label="Insert Statement" onClick="@command('insertStatement')" visible="@load(not vm.inserting)"/>
+				<button label="Insert Statement" onClick="@command('insertStatement')" 
+					visible="@load(not vm.inserting)"/>
 				<button label="Upload Statement" upload="true" visible="@load(vm.inserting)"
-					onUpload="@command('loadStatement', evt=event)" />
+					onUpload="@command('loadStatement', evt=event)" disabled="@load(empty vm.bankStatement.year or empty vm.bankStatement.name or empty vm.bankStatement.bank)"/>
 			</hlayout>
 			<vlayout visible="@load(vm.inserting)">
 				<radiogroup id="bank"

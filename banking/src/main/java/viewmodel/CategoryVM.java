@@ -2,7 +2,9 @@ package viewmodel;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.AfterCompose;
@@ -19,28 +21,35 @@ import model.Category;
 public class CategoryVM extends BaseVM {
 
 	private Category category;
+	private Category filter = new Category();
 	private List<Category> categories = new ArrayList<>();
 	@WireVariable
 	private CategoryMapper categoryMapper;
 	@WireVariable
 	private CurrentFyeUsersMapper currentFyeUsersMapper;
 	private boolean adding = false;
+	private Set<String> types = new HashSet<>();
 	
 	@AfterCompose
-	public void afterCompose() {
+	public void afterCompose() throws Exception {
 		refresh();
 	}
 	
 	@Command
-	public void refresh() {
+	public void refresh() throws Exception {
 		categories.clear();
-		categories.addAll(categoryMapper.findAll());
+		categories.addAll(filter(categoryMapper.findAll(), filter));
+		for (Category category : categories) {
+			types.add(category.getType());
+		}
+		filter = new Category();
 		BindUtils.postNotifyChange(null, null, this, "categories");
+		BindUtils.postNotifyChange(null, null, this, "filter");
 	}
 	
-	@NotifyChange({"adding", "categories"})
+	@NotifyChange({"adding", "categories", "filter"})
 	@Command
-	public void list() {
+	public void list() throws Exception {
 		adding = false;
 		refresh();
 	}
@@ -55,21 +64,22 @@ public class CategoryVM extends BaseVM {
 	
 	@NotifyChange({"adding", "categories"})
 	@Command
-	public void delete(@BindingParam("category") Category category) {
+	public void delete(@BindingParam("category") Category category) throws Exception {
 		categoryMapper.delete(category);
 		list();
 	}
 	
 	@NotifyChange({"adding", "categories"})
 	@Command
-	public void insert() {
-		if (category.getName() == null || category.getType() == null || category.getUsage() == null) {
+	public void insert() throws Exception {
+		if (category.getName() == null || category.getType() == null) {
 			Messagebox.show("Please fill in name, type and usage");
 			return;
 		}
 		category.setName(category.getName().toUpperCase());
 		category.setType(category.getType().toUpperCase());
 		category.setUsers(currentFyeUsersMapper.findAll().get(0).getUsers());
+		category.setFye(currentFyeUsersMapper.findAll().get(0).getFye());
 		categoryMapper.insert(category);
 		list();
 	}
@@ -87,5 +97,14 @@ public class CategoryVM extends BaseVM {
 	public List<Category> getCategories() {
 		return categories;
 	}
+
+	public Category getFilter() {
+		return filter;
+	}
+
+	public Set<String> getTypes() {
+		return types;
+	}
+	
 	
 }

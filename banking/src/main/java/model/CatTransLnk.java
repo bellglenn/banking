@@ -5,6 +5,7 @@ public class CatTransLnk {
 	private String category;
 	private String search;
 	private String users;
+	private Integer fye;
 	
 	public String getCategory() {
 		return category;
@@ -23,6 +24,12 @@ public class CatTransLnk {
 	}
 	public void setUsers(String users) {
 		this.users = users;
+	}
+	public Integer getFye() {
+		return fye;
+	}
+	public void setFye(Integer fye) {
+		this.fye = fye;
 	}
 	
 }

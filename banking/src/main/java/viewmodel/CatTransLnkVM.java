@@ -59,6 +59,7 @@ public class CatTransLnkVM extends BaseVM {
 		}
 		catTransLnk.setCategory(category.getName());
 		catTransLnk.setUsers(currentFyeUsersMapper.findAll().get(0).getUsers());
+		catTransLnk.setFye(currentFyeUsersMapper.findAll().get(0).getFye());
 
 		catTransLnkMapper.insert(catTransLnk);
 		inserted = true;

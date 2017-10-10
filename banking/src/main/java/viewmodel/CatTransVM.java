@@ -1,6 +1,5 @@
 package viewmodel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ public class CatTransVM extends BaseVM {
 	private BankTransaction bankTransaction;
 	private int nullCount = 0;
 	private boolean adding = false;
+	private CatTransV filter = new CatTransV();
 
 	@WireVariable
 	CatTransVMapper catTransVMapper;
@@ -53,11 +53,15 @@ public class CatTransVM extends BaseVM {
 	@Command
 	public void refresh() throws Exception {
 		transactions.clear();
-		transactions.addAll(filter(catTransVMapper.findAll()));
+		transactions.addAll(filter(catTransVMapper.findAll(), filter));
+		for (CatTransV catTransV : transactions) {
+			getWhos().add(catTransV.getWho());
+		}
 		nullCount = catTransVMapper.getNullCategoryCount();
 		BindUtils.postNotifyChange(null, null, this, "transactions");
 		BindUtils.postNotifyChange(null, null, this, "nullCount");
 		BindUtils.postNotifyChange(null, null, this, "filter");
+		BindUtils.postNotifyChange(null, null, this, "whos");
 	}
 	
 	@NotifyChange({"adding", "transactions"})
@@ -108,5 +112,11 @@ public class CatTransVM extends BaseVM {
 	public int getNullCount() {
 		return nullCount;
 	}
+
+	public CatTransV getFilter() {
+		return filter;
+	}
+	
+	
 
 }

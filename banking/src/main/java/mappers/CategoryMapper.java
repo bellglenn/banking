@@ -13,10 +13,10 @@ public interface CategoryMapper {
 	@Select("SELECT * FROM category ORDER BY name")
 	public List<Category> findAll();
 	
-	@Insert("INSERT INTO category (name, deduction, type, users, usage)\r\n" + 
-			"        VALUES (#{name}, #{deduction}, #{type}, #{users}, #{usage})")
+	@Insert("INSERT INTO category (name, deduction, type, users, fye)\r\n" + 
+			"        VALUES (#{name}, #{deduction}, #{type}, #{users}, #{fye})")
 	public void insert(Category category);
 
-	@Delete("delete from category where name = #{name} and users = #{users}")
+	@Delete("delete from category where name = #{name} and users = #{users} and fye = #{fye}")
 	public void delete(Category category);
 }
