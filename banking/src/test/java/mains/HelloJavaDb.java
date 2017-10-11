@@ -12,7 +12,7 @@ public class HelloJavaDb {
 	public static void main(String[] args) throws SQLException {
 		HelloJavaDb db = new HelloJavaDb();
 
-		db.connectionToDerby();
+		db.connectionToMysql();
 		db.normalDbUsage();
 	}
 
@@ -25,6 +25,15 @@ public class HelloJavaDb {
 		conn = DriverManager.getConnection(dbUrl);
 	}
 
+	public void connectionToMysql() throws SQLException {
+		// -------------------------------------------
+		// URL format is
+		// jdbc:derby:<local directory to save data>
+		// -------------------------------------------
+		String dbUrl = "jdbc:mysql://localhost:3306/mysql";
+		conn = DriverManager.getConnection(dbUrl, "bellgl", "Snapper_22");
+	}
+
 	public void normalDbUsage() throws SQLException {
 		Statement stmt = conn.createStatement();
 		
@@ -33,18 +42,14 @@ public class HelloJavaDb {
 //		 stmt.executeUpdate("Drop view bank_statement_v");
 //		 stmt.executeUpdate("Drop Table bank_transaction");
 //		 stmt.executeUpdate("Drop Table cat_trans_lnk");
-//		 stmt.executeUpdate("Drop Table category");
+		 stmt.executeUpdate("drop Table category_t");
 //		 stmt.executeUpdate("Drop sequence bt_seq");
 
 //		 stmt.executeUpdate("create sequence bt_seq increment by 1");
 
 		 // create table
-//		stmt.executeUpdate("  CREATE TABLE category (name VARCHAR(50) not null, \r\n" + 
-//				"	type VARCHAR(50), \r\n" + 
-//				"	deduction DECIMAL, \r\n" + 
-//				"	users VARCHAR(20) not null, \r\n" + 
-//				"	sort_order INTEGER\r\n" + 
-//				"   ) ");
+		stmt.executeUpdate(" CREATE TABLE CATEGORY_T (NAME VARCHAR(50), TYPE VARCHAR(50), DEDUCTION decimal, USERS VARCHAR(50), " + 
+						"SORT_ORDER integer, FYE integer)");
 //		stmt.executeUpdate("CREATE TABLE bank_transaction (when DATE, description VARCHAR(2000), \r\n" + 
 //				"	amount DECIMAL, \r\n" + 
 //				"	who VARCHAR(20), \r\n" + 
@@ -71,114 +76,114 @@ public class HelloJavaDb {
 //		stmt.executeUpdate("ALTER TABLE category ADD CONSTRAINT category_pk PRIMARY KEY (name, users)");
 //		stmt.executeUpdate("ALTER TABLE CAT_TRANS_LNK ADD CONSTRAINT cat_trans_lnk_fk FOREIGN KEY (category, users) REFERENCES category (name, users)");
 //		
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HAIR AND BEAUTY','LIFESTYLE',0,'Glenn Jennie',55)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTERBANK TRANSFER','TRANSFER',0,'Glenn Jennie',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CWTH SUPER','INCOME',0,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('QLD HEALTH','INCOME',1,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CLOTHING','FOOD',0,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('POST','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TAX','TAX',0,'Glenn Jennie',88)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MEDICAL INS REFUND','REFUND',0,'Glenn Jennie',77)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HARDWARE','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WITHDRAWAL','WITHDRAWAL',0,'Glenn Jennie',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ACCOM','RECREATION',0,'Glenn Jennie',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('DINING','FOOD',0,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WHITE GOODS','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BARGE','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('FINE','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL TOYOTA','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MUSIC','RECREATION',0,'Glenn Jennie',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('QSUPER','INCOME',0,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE VW','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CHARITY','DEDUCTION',1,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ART','HOMEWARE',0,'Glenn Jennie',44)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WATER TAXI','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PHONE','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('AIR BNB INSURANCE','EXPENSE',1,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MEDICAL','DEDUCTION',1,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTERNET','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TAX_AGENT','DEDUCTION',1,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ALCOHOL','FOOD',0,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('POWER','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PARKING','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL VW','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO VW','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HOUSE INSURANCE','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BUS','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('RATES','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('GAS','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('FISHING','RECREATION',0,'Glenn Jennie',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO TOYOTA','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TRANSFER','TRANSFER',0,'Glenn Jennie',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('DEPOSIT','DEPOSIT',0,'Glenn Jennie',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BANK FEE','DEDUCTION',1,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('AIR BNB','INCOME',0,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('UQ','INCOME',0,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE TOYOTA','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO SUBARU','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL SUBARU','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE SUBARU','CAR',0,'Glenn Jennie',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('GROCERIES','FOOD',0,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CREDIT CARD','TRANSFER',0,'Glenn Jennie',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REPAIRS','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HOMEWARE','EXPENSE',0.5,'Glenn Jennie',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TRAVEL','TRAVEL',0,'Glenn Jennie',68)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CHOOKS','FOOD',0.5,'Glenn Jennie',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('RACQ','TRANSPORT',0,'Glenn Jennie',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTEREST','INCOME',1,'Glenn Jennie',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HAIR AND BEAUTY','LIFESTYLE',0,'Jackson',55)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTERBANK TRANSFER','TRANSFER',0,'Jackson',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CWTH SUPER','INCOME',0,'Jackson',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('QLD HEALTH','INCOME',1,'Jackson',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CLOTHING','FOOD',0,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('POST','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TAX','TAX',0,'Jackson',88)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MEDICAL INS REFUND','REFUND',0,'Jackson',77)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HARDWARE','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WITHDRAWAL','WITHDRAWAL',0,'Jackson',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ACCOM','RECREATION',0,'Jackson',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('DINING','FOOD',0,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WHITE GOODS','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BARGE','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('FINE','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL TOYOTA','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MUSIC','RECREATION',0,'Jackson',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('QSUPER','INCOME',0,'Jackson',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE VW','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CHARITY','DEDUCTION',1,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ART','HOMEWARE',0,'Jackson',44)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('WATER TAXI','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PHONE','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('MEDICAL','DEDUCTION',1,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTERNET','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TAX_AGENT','DEDUCTION',1,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('ALCOHOL','FOOD',0,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('POWER','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PARKING','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL VW','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO VW','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HOUSE INSURANCE','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BUS','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('RATES','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('GAS','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('FISHING','RECREATION',0,'Jackson',66)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO TOYOTA','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TRANSFER','TRANSFER',0,'Jackson',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('DEPOSIT','DEPOSIT',0,'Jackson',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('BANK FEE','DEDUCTION',1,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('UQ','INCOME',0,'Jackson',11)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE TOYOTA','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REGO SUBARU','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('PETROL SUBARU','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('SERVICE SUBARU','CAR',0,'Jackson',70)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('GROCERIES','FOOD',0,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CREDIT CARD','TRANSFER',0,'Jackson',99)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('REPAIRS','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('HOMEWARE','EXPENSE',0.5,'Jackson',22)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('TRAVEL','TRAVEL',0,'Jackson',68)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('CHOOKS','FOOD',0.5,'Jackson',33)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('RACQ','TRANSPORT',0,'Jackson',67)");
-//		stmt.executeUpdate("Insert into category (name,type,DEDUCTION,users,sort_order) values ('INTEREST','INCOME',1,'Jackson',11)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HAIR AND BEAUTY','LIFESTYLE',0,'Jennie Glenn',55,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTERBANK TRANSFER','TRANSFER',0,'Jennie Glenn',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CWTH SUPER','INCOME',0,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('QLD HEALTH','INCOME',1,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CLOTHING','FOOD',0,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('POST','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TAX','TAX',0,'Jennie Glenn',88,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MEDICAL INS REFUND','REFUND',0,'Jennie Glenn',77,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HARDWARE','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WITHDRAWAL','WITHDRAWAL',0,'Jennie Glenn',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ACCOM','RECREATION',0,'Jennie Glenn',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('DINING','FOOD',0,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WHITE GOODS','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BARGE','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('FINE','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL TOYOTA','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MUSIC','RECREATION',0,'Jennie Glenn',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('QSUPER','INCOME',0,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE VW','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CHARITY','DEDUCTION',1,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ART','HOMEWARE',0,'Jennie Glenn',44,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WATER TAXI','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PHONE','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('AIR BNB INSURANCE','EXPENSE',1,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MEDICAL','DEDUCTION',1,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTERNET','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TAX_AGENT','DEDUCTION',1,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ALCOHOL','FOOD',0,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('POWER','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PARKING','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL VW','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO VW','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HOUSE INSURANCE','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BUS','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('RATES','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('GAS','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('FISHING','RECREATION',0,'Jennie Glenn',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO TOYOTA','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TRANSFER','TRANSFER',0,'Jennie Glenn',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('DEPOSIT','DEPOSIT',0,'Jennie Glenn',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BANK FEE','DEDUCTION',1,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('AIR BNB','INCOME',0,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('UQ','INCOME',0,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE TOYOTA','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO SUBARU','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL SUBARU','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE SUBARU','CAR',0,'Jennie Glenn',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('GROCERIES','FOOD',0,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CREDIT CARD','TRANSFER',0,'Jennie Glenn',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REPAIRS','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HOMEWARE','EXPENSE',0.5,'Jennie Glenn',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TRAVEL','TRAVEL',0,'Jennie Glenn',68,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CHOOKS','FOOD',0.5,'Jennie Glenn',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('RACQ','TRANSPORT',0,'Jennie Glenn',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTEREST','INCOME',1,'Jennie Glenn',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HAIR AND BEAUTY','LIFESTYLE',0,'Jackson',55,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTERBANK TRANSFER','TRANSFER',0,'Jackson',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CWTH SUPER','INCOME',0,'Jackson',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('QLD HEALTH','INCOME',1,'Jackson',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CLOTHING','FOOD',0,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('POST','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TAX','TAX',0,'Jackson',88,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MEDICAL INS REFUND','REFUND',0,'Jackson',77,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HARDWARE','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WITHDRAWAL','WITHDRAWAL',0,'Jackson',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ACCOM','RECREATION',0,'Jackson',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('DINING','FOOD',0,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WHITE GOODS','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BARGE','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('FINE','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL TOYOTA','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MUSIC','RECREATION',0,'Jackson',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('QSUPER','INCOME',0,'Jackson',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE VW','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CHARITY','DEDUCTION',1,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ART','HOMEWARE',0,'Jackson',44,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('WATER TAXI','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PHONE','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('MEDICAL','DEDUCTION',1,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTERNET','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TAX_AGENT','DEDUCTION',1,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('ALCOHOL','FOOD',0,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('POWER','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PARKING','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL VW','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO VW','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HOUSE INSURANCE','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BUS','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('RATES','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('GAS','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('FISHING','RECREATION',0,'Jackson',66,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO TOYOTA','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TRANSFER','TRANSFER',0,'Jackson',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('DEPOSIT','DEPOSIT',0,'Jackson',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('BANK FEE','DEDUCTION',1,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('UQ','INCOME',0,'Jackson',11,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE TOYOTA','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REGO SUBARU','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('PETROL SUBARU','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('SERVICE SUBARU','CAR',0,'Jackson',70,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('GROCERIES','FOOD',0,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CREDIT CARD','TRANSFER',0,'Jackson',99,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('REPAIRS','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('HOMEWARE','EXPENSE',0.5,'Jackson',22,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('TRAVEL','TRAVEL',0,'Jackson',68,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('CHOOKS','FOOD',0.5,'Jackson',33,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('RACQ','TRANSPORT',0,'Jackson',67,2017)");
+		stmt.executeUpdate("Insert into CATEGORY_T (NAME,TYPE,DEDUCTION,USERS,SORT_ORDER,FYE) values ('INTEREST','INCOME',1,'Jackson',11,2017)");
 //		
 //		
 //		stmt.executeUpdate("insert into cat_trans_lnk (category,search,users) values ('DINING','POINT LOOKOUT BLUE R','Glenn Jennie')");
@@ -490,7 +495,7 @@ public class HelloJavaDb {
 ////		stmt.executeUpdate("insert into users values (4,'jennie')");
 //
 		// query
-		ResultSet rs = stmt.executeQuery("SELECT name FROM category");
+		ResultSet rs = stmt.executeQuery("SELECT * FROM category_t");
 		
 		// print out query result
 		while (rs.next()) {
