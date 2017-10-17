@@ -1,71 +1,28 @@
 package model;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-public class CatTransV implements Comparable<CatTransV> {
+public class CatTransV extends BankTransaction {
 	
-	private String category;
 	private String search;
-	private Date when;
-	private String description;
-	private BigDecimal amount;
-	private String who;
-	private String bank;
-	private Integer fye;
+	private String lnkcat;
+	private boolean editingStatus = false;
 	
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
 	public String getSearch() {
 		return search;
 	}
 	public void setSearch(String search) {
 		this.search = search;
 	}
-	public Date getWhen() {
-		return when;
+	public String getLnkcat() {
+		return lnkcat;
 	}
-	public void setWhen(Date when) {
-		this.when = when;
+	public void setLnkcat(String lnkcat) {
+		this.lnkcat = lnkcat;
 	}
-	public String getDescription() {
-		return description;
+	public boolean isEditingStatus() {
+		return editingStatus;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+	public void setEditingStatus(boolean editingStatus) {
+		this.editingStatus = editingStatus;
 	}
-	public BigDecimal getAmount() {
-		return amount;
-	}
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-	public String getWho() {
-		return who;
-	}
-	public void setWho(String who) {
-		this.who = who;
-	}
-	public String getBank() {
-		return bank;
-	}
-	public void setBank(String bank) {
-		this.bank = bank;
-	}
-	public Integer getFye() {
-		return fye;
-	}
-	public void setFye(Integer fye) {
-		this.fye = fye;
-	}
-	@Override
-	public int compareTo(CatTransV catTransV) {
-		return catTransV.getDescription().compareTo(description);
-	}
-	
 	
 }

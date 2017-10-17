@@ -1,110 +1,140 @@
 package viewmodel;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.zkoss.bind.BindUtils;
-import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 
 import mappers.CategoryMapper;
-import mappers.CurrentFyeUsersMapper;
+import mappers.SessionVarsMapper;
 import model.Category;
 
 public class CategoryVM extends BaseVM {
 
-	private Category category;
-	private Category filter = new Category();
-	private List<Category> categories = new ArrayList<>();
+	private CategoryStatus category;
+	private String type;
+	private ListModelList<CategoryStatus> categories = new ListModelList<>();
 	@WireVariable
 	private CategoryMapper categoryMapper;
 	@WireVariable
-	private CurrentFyeUsersMapper currentFyeUsersMapper;
+	private SessionVarsMapper sessionVarsMapper;
 	private boolean adding = false;
 	private Set<String> types = new HashSet<>();
-	
-	@AfterCompose
-	public void afterCompose() throws Exception {
-		refresh();
-	}
-	
+
 	@Command
 	public void refresh() throws Exception {
 		categories.clear();
-		categories.addAll(filter(categoryMapper.findAll(), filter));
-		for (Category category : categories) {
+		List<Category> list = categoryMapper.findAll();
+		for (Category category : list) {
+			if (type == null) {
+				categories.add(new CategoryStatus(category, false));
+			} else {
+				if (type.equals(category.getType())) {
+					categories.add(new CategoryStatus(category, false));
+				}
+			}
 			types.add(category.getType());
 		}
-		filter = new Category();
 		BindUtils.postNotifyChange(null, null, this, "categories");
-		BindUtils.postNotifyChange(null, null, this, "filter");
+		BindUtils.postNotifyChange(null, null, this, "types");
 	}
-	
-	@NotifyChange({"adding", "categories", "filter"})
+
+	@Command
+	public void changeEditableStatus(@BindingParam("category") CategoryStatus category) {
+		category.setEditingStatus(!category.isEditingStatus());
+		refreshRowTemplate(category);
+	}
+
+	@Command
+	public void confirm(@BindingParam("category") CategoryStatus category) {
+		changeEditableStatus(category);
+		categoryMapper.update(category.getCategory());
+		refreshRowTemplate(category);
+	}
+
+	public void refreshRowTemplate(CategoryStatus category) {
+		// replace the element in the collection by itself to trigger a model
+		// update
+		categories.set(categories.indexOf(category), category);
+		BindUtils.postNotifyChange(null, null, this, "categories");
+	}
+
+	@NotifyChange("adding")
 	@Command
 	public void list() throws Exception {
 		adding = false;
 		refresh();
 	}
-	
-	@NotifyChange({"adding", "category"})
+
+	@NotifyChange({ "adding", "category" })
 	@Command
 	public void add() {
 		adding = true;
-		category = new Category();
-		category.setDeduction(new BigDecimal(0));
+		category = new CategoryStatus(new Category(), true);
+		category.getCategory().setDeduction(new BigDecimal(0));
 	}
-	
-	@NotifyChange({"adding", "categories"})
+
+	@NotifyChange({ "adding", "categories" })
 	@Command
-	public void delete(@BindingParam("category") Category category) throws Exception {
-		categoryMapper.delete(category);
+	public void delete(@BindingParam("category") CategoryStatus category) throws Exception {
+		try {
+			categoryMapper.delete(category.getCategory());
+		} catch (Exception e) {
+			Messagebox.show("All links for \"" + category.getCategory().getName() + "\" must be deleted beforehand");
+		}
 		list();
 	}
-	
-	@NotifyChange({"adding", "categories"})
+
+	@NotifyChange({ "adding", "categories" })
 	@Command
 	public void insert() throws Exception {
-		if (category.getName() == null || category.getType() == null) {
-			Messagebox.show("Please fill in name, type and usage");
+		if (category.getCategory().getName() == null || category.getCategory().getType() == null
+				|| category.getCategory().getDeduction() == null) {
+			Messagebox.show("Please fill in name, type and deduction");
 			return;
 		}
-		category.setName(category.getName().toUpperCase());
-		category.setType(category.getType().toUpperCase());
-		category.setUsers(currentFyeUsersMapper.findAll().get(0).getUsers());
-		category.setFye(currentFyeUsersMapper.findAll().get(0).getFye());
-		categoryMapper.insert(category);
+		category.getCategory().setName(category.getCategory().getName().toUpperCase());
+		category.getCategory().setType(category.getCategory().getType().toUpperCase());
+		category.getCategory().setUsr(sessionVarsMapper.getSessionVars().getUsr());
+		category.getCategory().setFye(sessionVarsMapper.getSessionVars().getFye());
+		categoryMapper.insert(category.getCategory());
 		list();
 	}
-	
+
 	public boolean isAdding() {
 		return adding;
 	}
 
-	public Category getCategory() {
+	public CategoryStatus getCategory() {
 		return category;
 	}
-	public void setCategory(Category category) {
+
+	public void setCategory(CategoryStatus category) {
 		this.category = category;
 	}
-	public List<Category> getCategories() {
+
+	public List<CategoryStatus> getCategories() {
 		return categories;
 	}
 
-	public Category getFilter() {
-		return filter;
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public Set<String> getTypes() {
 		return types;
 	}
-	
-	
+
 }

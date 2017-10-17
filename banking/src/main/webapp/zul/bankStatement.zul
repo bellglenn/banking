@@ -8,11 +8,11 @@
 				<button label="Insert Statement" onClick="@command('insertStatement')" 
 					visible="@load(not vm.inserting)"/>
 				<button label="Upload Statement" upload="true" visible="@load(vm.inserting)"
-					onUpload="@command('loadStatement', evt=event)" disabled="@load(empty vm.bankStatement.year or empty vm.bankStatement.name or empty vm.bankStatement.bank)"/>
+					onUpload="@command('loadStatement', evt=event)" disabled="@load(empty vm.statement.account or empty vm.statement.bank)"/>
 			</hlayout>
 			<vlayout visible="@load(vm.inserting)">
 				<radiogroup id="bank"
-					selectedItem="@bind(vm.bankStatement.bank)" />
+					selectedItem="@bind(vm.statement.bank)" />
 				<grid>
 					<columns>
 						<column width="100px" />
@@ -28,12 +28,7 @@
 						<row>
 							<label value="Account Name" />
 							<textbox
-								value="@bind(vm.bankStatement.name)" />
-						</row>
-						<row>
-							<label value="Fin Year End" />
-							<textbox
-								value="@bind(vm.bankStatement.year)" />
+								value="@bind(vm.statement.account)" />
 						</row>
 					</rows>
 				</grid>
@@ -42,16 +37,14 @@
 			<listbox model="@bind(vm.statements)" hflex="true"
 				mold="paging" height="200px">
 				<listhead>
-					<listheader label="FYE" />
 					<listheader label="Bank" />
-					<listheader label="Who" />
+					<listheader label="Account" />
 					<listheader label="Action" />
 				</listhead>
 				<template name="model">
 					<listitem>
-						<listcell label="@bind(each.fye)" />
 						<listcell label="@bind(each.bank)" />
-						<listcell label="@bind(each.who)" />
+						<listcell label="@bind(each.account)" />
 						<listcell>
 							<button label="Delete"
 								onClick="@command('deleteStatement', statement=each)" />

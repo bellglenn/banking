@@ -2,15 +2,12 @@ package model;
 
 import java.math.BigDecimal;
 
-public class TransactionSummary {
+public class TransactionSummary extends SessionVars {
 	
 	private String type;
 	private String category;
-	private String who;
-	private String usage;
-	private Integer fye;
 	private BigDecimal amount;
-	private BigDecimal tax;
+	private BigDecimal deductable;
 	
 	public String getType() {
 		return type;
@@ -24,38 +21,16 @@ public class TransactionSummary {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getWho() {
-		return who;
-	}
-	public void setWho(String who) {
-		this.who = who;
-	}
-	public Integer getFye() {
-		return fye;
-	}
-	public void setFye(Integer fye) {
-		this.fye = fye;
-	}
 	public BigDecimal getAmount() {
 		return amount;
 	}
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	public BigDecimal getTax() {
-		return tax;
+	public BigDecimal getDeductable() {
+		return deductable;
 	}
-	public void setTax(BigDecimal taxExpense) {
-		this.tax = taxExpense;
+	public void setDeductable(BigDecimal deductable) {
+		this.deductable = deductable;
 	}
-	public String getUsage() {
-		return usage;
-	}
-	public void setUsage(String usage) {
-		this.usage = usage;
-	}
-	
-	
-	
-
 }

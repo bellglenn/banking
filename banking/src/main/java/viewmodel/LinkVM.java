@@ -13,7 +13,7 @@ import org.zkoss.zul.Messagebox;
 
 import mappers.CatTransLnkMapper;
 import mappers.CategoryMapper;
-import mappers.CurrentFyeUsersMapper;
+import mappers.SessionVarsMapper;
 import model.CatTransLnk;
 import model.Category;
 
@@ -28,7 +28,7 @@ public class LinkVM extends BaseVM {
 	@WireVariable
 	CategoryMapper categoryMapper;
 	@WireVariable
-	private CurrentFyeUsersMapper currentFyeUsersMapper;
+	private SessionVarsMapper sessionVarsMapper;
 	private boolean adding = false;
 	
 	@AfterCompose
@@ -43,6 +43,7 @@ public class LinkVM extends BaseVM {
 		categories.clear();
 		categories.addAll(categoryMapper.findAll());
 		BindUtils.postNotifyChange(null, null, this, "links");
+		BindUtils.postNotifyChange(null, null, this, "categories");
 	}
 	
 	@NotifyChange({"adding", "links"})
@@ -74,7 +75,8 @@ public class LinkVM extends BaseVM {
 			Messagebox.show("Please fill in category and search");
 			return;
 		}
-		catTransLnk.setUsers(currentFyeUsersMapper.findAll().get(0).getUsers());
+		catTransLnk.setUsr(sessionVarsMapper.getSessionVars().getUsr());
+		catTransLnk.setFye(sessionVarsMapper.getSessionVars().getFye());
 		catTransLnk.setCategory(category.getName());
 		catTransLnkMapper.insert(catTransLnk);
 		list();

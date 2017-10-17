@@ -4,7 +4,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.zkoss.bind.BindUtils;
@@ -20,24 +19,25 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
 import mappers.BankTransactionMapper;
-import mappers.CurrentFyeUsersMapper;
+import mappers.SessionVarsMapper;
 import model.BankStatement;
-import model.BankStatementV;
 import model.BankTransaction;
 
 public class BankStatementVM extends BaseVM {
 
 	public static final String ZUL = "zul/bankStatement.zul";
 
-	private BankStatement bankStatement = new BankStatement();
-	private List<BankStatementV> statements = new ArrayList<>();
+	private BankStatement statement = new BankStatement();
+	private List<BankStatement> statements = new ArrayList<>();
 
 	// NB follow the naming convention to avoid null pointer exceptions
 	@WireVariable
 	BankTransactionMapper bankTransactionMapper;
 	@WireVariable
-	CurrentFyeUsersMapper currentFyeUsersMapper;
+	private SessionVarsMapper sessionVarsMapper;
 	
+	private File file;
+	private List<BankTransaction> transactions = new ArrayList<BankTransaction>();
 	private boolean inserting = false;
 	
 	@AfterCompose
@@ -48,68 +48,79 @@ public class BankStatementVM extends BaseVM {
 	@Command
 	public void refresh() throws Exception {
 		statements.clear();
-		statements.addAll(bankTransactionMapper.getBankStatements());
+		statements.addAll(bankTransactionMapper.getStatements());
 		inserting = false;
+		statement = new BankStatement();
+		statement.setFye(sessionVarsMapper.getSessionVars().getFye());
+		statement.setUsr(sessionVarsMapper.getSessionVars().getUsr());
+		transactions.clear();
 		BindUtils.postNotifyChange(null, null, this, "statements");
 		BindUtils.postNotifyChange(null, null, this, "inserting");
+		BindUtils.postNotifyChange(null, null, this, "statement");
 	}
 
-	public BankStatement getBankStatement() {
-		return bankStatement;
+	public BankStatement getStatement() {
+		return statement;
+	}
+	
+
+	public List<BankStatement> getStatements() {
+		return statements;
 	}
 
 	@Command
 	@NotifyChange("statements")
-	public void deleteStatement(@BindingParam("statement") BankStatementV statement) {
-		if (statement.getBank() == null || statement.getWho() == null || statement.getFye() == null) {
-			Messagebox.show("Please select year, name and bank");
+	public void deleteStatement(@BindingParam("statement") BankStatement statement) {
+		if (invalidStatement(statement)) {
+			Messagebox.show("Please select account and bank");
 			return;
 		}
-		bankTransactionMapper.deleteStatement(new Integer(statement.getFye()), statement.getWho(), statement.getBank());
+		bankTransactionMapper.deleteStatement(statement);
 		statements.clear();
-		statements.addAll(bankTransactionMapper.getBankStatements());
+		statements.addAll(bankTransactionMapper.getStatements());
 	}
 
-	@NotifyChange({"bankStatement", "inserting"})
+	private boolean invalidStatement(BankStatement statement) {
+		return statement.getBank() == null || statement.getAccount() == null;
+	}
+
+	@NotifyChange({"statement", "inserting"})
 	@Command
 	public void insertStatement() throws Exception {
-		bankStatement = new BankStatement();
 		inserting = true;
 	}
 	
-	@NotifyChange({ "statements", "bankStatement", "inserting" })
+	@NotifyChange({ "statements", "statement", "inserting" })
 	@Command
 	public void loadStatement(@BindingParam("evt") UploadEvent evt) throws Exception {
 		if (evt != null && evt.getMedia() != null) {
 			Media media = evt.getMedia();
 			if (media.getName().endsWith("csv")) {
-				bankStatement.setFile(FileUtil.writeFile(media));
-				BindUtils.postNotifyChange(null, null, this, "bankStatement");
+				file = FileUtil.writeFile(media);
 			} else {
 				Messagebox.show("Please select a csv file");
 			}
 		}
-		if (!bankStatement.isReadable()) {
-			Messagebox.show("Please fill in all the fields and select a file");
+		if (invalidStatement(statement)) {
+			Messagebox.show("Please fill in all the fields");
 			return;
 		}
-		extractTransactions(bankStatement.getFile());
+		extractTransactions();
 
 		Messagebox.show(
-				"Insert transactions from " + bankStatement.getFile().getAbsolutePath() + " for "
-						+ bankStatement.getName() + " " + bankStatement.getBank() + " " + bankStatement.getYear() + " "
-						+ bankStatement.getDescription() + " ?",
+				"Insert transactions from " + file.getAbsolutePath() + " for "
+						+ statement.getAccount() + " " + statement.getBank() + " ?",
 				"Confirm Dialog", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new EventListener<Event>() {
 					@Override
 					public void onEvent(Event evt) throws Exception {
 						if (evt.getName().equals("onOK")) {
 							int i = 0;
-							for (BankTransaction bt : bankStatement.getTransactions()) {
+							bankTransactionMapper.deleteStatement(statement);
+							for (BankTransaction bt : transactions) {
 								bankTransactionMapper.insert(bt);
 								i++;
 							}
 							Messagebox.show(i + " transactions inserted.");
-							bankStatement = new BankStatement();
 							refresh();
 						}
 					}
@@ -117,40 +128,34 @@ public class BankStatementVM extends BaseVM {
 
 	}
 
-	void extractTransactions(File file) throws Exception {
+	void extractTransactions() throws Exception {
 		List<String[]> lines = FileUtil.readCsvFile(file);
 		// Messagebox.show("Lines read = " + lines.size());
 		int lineCount = 0;
 		for (String[] line : lines) {
 			lineCount++;
-			if ("SUNCORP".equals(bankStatement.getBank().toUpperCase())) {
+			if ("SUNCORP".equals(statement.getBank().toUpperCase())) {
 				if (lineCount > 2) {
 					if (line[0] == null || line[1] == null || line[2] == null) {
 						throw new Exception("when, description or amount is null at line " + lineCount);
 					}
 					BankTransaction bankTransaction = new BankTransaction();
-					bankTransaction.setWhen(new SimpleDateFormat("dd/MM/yyyy").parse(line[0]));
+					bankTransaction.setTdate(new SimpleDateFormat("dd/MM/yyyy").parse(line[0]));
 					String desc = line[1].replaceAll("\"", "").replaceAll("  ", " ").replaceAll("  ", " ").trim();
 					desc = refactorSuncorpDescription(desc);
 					bankTransaction.setDescription(desc);
 					String amt = line[2].replaceFirst("\\$", "").replaceFirst(",", "").trim();
 					bankTransaction.setAmount(new BigDecimal(amt));
-					bankTransaction.setId(new Integer(bankTransactionMapper.getNextId()));
-					bankTransaction.setWho(bankStatement.getName());
-					bankTransaction.setBank(bankStatement.getBank());
-					bankTransaction.setFye(new Integer(bankStatement.getYear()));
-					bankStatement.getTransactions().add(bankTransaction);
-				} else {
-					bankStatement.setDescription(bankStatement.getDescription() + Arrays.toString(line) + "\n");
-				}
+					addTransaction(bankTransaction);
+				} 
 			}
-			if ("ING".equals(bankStatement.getBank().toUpperCase())) {
+			if ("ING".equals(statement.getBank().toUpperCase())) {
 				if (lineCount > 1) {
 					if (line[0] == null || line[1] == null) {
 						throw new Exception("when, description or amount is null at line " + lineCount);
 					}
 					BankTransaction bankTransaction = new BankTransaction();
-					bankTransaction.setWhen(new SimpleDateFormat("dd/MM/yyyy").parse(line[0]));
+					bankTransaction.setTdate(new SimpleDateFormat("dd/MM/yyyy").parse(line[0]));
 					String desc = line[1].replaceAll("\"", "").replaceAll("  ", " ").trim();
 					bankTransaction.setDescription(desc);
 					String amt;
@@ -160,18 +165,20 @@ public class BankStatementVM extends BaseVM {
 						amt = line[2];
 					}
 					bankTransaction.setAmount(new BigDecimal(amt.replaceFirst("\\$", "").replaceFirst(",", "").trim()));
-					bankTransaction.setId(new Integer(bankTransactionMapper.getNextId()));
-					bankTransaction.setWho(bankStatement.getName());
-					bankTransaction.setBank(bankStatement.getBank());
-					bankTransaction.setFye(new Integer(bankStatement.getYear()));
-					bankStatement.getTransactions().add(bankTransaction);
-				} else {
-					bankStatement.setDescription(bankStatement.getDescription() + Arrays.toString(line) + "\n");
-				}
+					addTransaction(bankTransaction);
+				} 
 			}
 
 		}
 
+	}
+
+	private void addTransaction(BankTransaction bankTransaction) {
+		bankTransaction.setAccount(statement.getAccount());
+		bankTransaction.setBank(statement.getBank());
+		bankTransaction.setFye(statement.getFye());
+		bankTransaction.setUsr(statement.getUsr());
+		transactions.add(bankTransaction);
 	}
 
 	String refactorSuncorpDescription(String desc) {
@@ -182,10 +189,6 @@ public class BankStatementVM extends BaseVM {
 			}
 		}
 		return desc;
-	}
-
-	public List<BankStatementV> getStatements() {
-		return statements;
 	}
 
 	public boolean isInserting() {

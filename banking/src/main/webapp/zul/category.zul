@@ -1,15 +1,13 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk>
 	<div apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm')@init('viewmodel.CategoryVM')" width="600px">
+		viewModel="@id('vm')@init('viewmodel.CategoryVM')">
 		<vlayout>
 			<vlayout visible="@bind(vm.adding)">
 				<hlayout>
 					<button label="List" onClick="@command('list')" />
 					<button label="Insert" onClick="@command('insert')" />
 				</hlayout>
-				<radiogroup id="usage"
-					selectedItem="@bind(vm.category.usage)" />
 				<grid>
 					<columns>
 						<column width="200px" />
@@ -18,16 +16,16 @@
 					<rows>
 						<row>
 							<label value="Name" />
-							<textbox value="@bind(vm.category.name)" />
+							<textbox value="@bind(vm.category.category.name)" />
 						</row>
 						<row>
 							<label value="Type" />
-							<textbox value="@bind(vm.category.type)" />
+							<textbox value="@bind(vm.category.category.type)" />
 						</row>
 						<row>
 							<label value="Deduction" />
 							<decimalbox
-								value="@bind(vm.category.deduction)" />
+								value="@bind(vm.category.category.deduction)" />
 						</row>
 					</rows>
 				</grid>
@@ -38,19 +36,19 @@
 					<button label="Refresh"
 						onClick="@command('refresh')" />
 				</hlayout>
-				<listbox model="@bind(vm.categories)" hflex="true"
-					mold="paging" pageSize="10" height="420px">
+				<listbox
+					model="@bind(vm.categories) @template(each.editingStatus ? 'editable' : 'noneditable')"
+					hflex="true" mold="paging" pageSize="10" height="420px">
 					<listhead>
 						<listheader label="Type" />
 						<listheader label="Name" />
-						<listheader label="Deduction" />
+						<listheader label="Deduction" align="right"/>
 						<listheader label="Action" />
 					</listhead>
 					<auxhead>
 						<auxheader>
 							<selectbox model="@bind(vm.types)"
-								selectedItem="@bind(vm.filter.type)"
-								onSelect="@command('refresh')">
+								selectedItem="@bind(vm.type)" onSelect="@command('refresh')">
 								<template name="model">
 									<label value="@bind(each)" />
 								</template>
@@ -58,16 +56,38 @@
 						</auxheader>
 						<auxheader />
 						<auxheader />
-						<auxheader/>
+						<auxheader />
 					</auxhead>
-					<template name="model">
+					<template name="editable">
 						<listitem>
-							<listcell label="@bind(each.type)" />
-							<listcell label="@bind(each.name)" />
-							<listcell label="@bind(each.deduction)" />
+							<listcell label="@bind(each.category.type)" />
+							<listcell label="@bind(each.category.name)" />
 							<listcell>
-								<button label="Delete"
-									onClick="@command('delete', category=each)" />
+								<decimalbox
+									value="@load(each.category.deduction) 
+									@save(each.category.deduction, before='confirm')" />
+							</listcell>
+							<listcell>
+								<button label="OK"
+									onClick="@command('confirm', category=each)" />
+								<button label="Cancel"
+									onClick="@command('changeEditableStatus', category=each)" />
+							</listcell>
+						</listitem>
+					</template>
+					<template name="noneditable">
+						<listitem>
+							<listcell label="@bind(each.category.type)" />
+							<listcell label="@bind(each.category.name)" />
+							<listcell
+								label="@bind(each.category.deduction)  @converter('formatedNumber', format='0.0')" />
+							<listcell>
+								<div>
+									<button label="Edit"
+										onClick="@command('changeEditableStatus', category=each)" />
+									<button label="Delete"
+										onClick="@command('delete', category=each)" />
+								</div>
 							</listcell>
 						</listitem>
 					</template>

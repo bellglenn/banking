@@ -12,19 +12,24 @@ import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
-import mappers.CurrentFyeUsersMapper;
-import model.CurrentFyeUsers;
+import mappers.SessionVarsMapper;
+import mappers.UsrGrpMapper;
+import model.SessionVars;
+import model.UsrGrp;
 
 public class IndexVM {
-	private List<String> users = new ArrayList<>();
+	private List<String> usrs = new ArrayList<>();
+	private List<Integer> fyes = new ArrayList<>();
+
 	private boolean attributesSet = false;
-	private String usr;
-	private Integer fye;
+	private UsrGrp usrGrp = new UsrGrp();
+	private SessionVars sessionVars = new SessionVars();
 	
-	private List<Integer> years = new ArrayList<>();
 	
 	@WireVariable
-	private CurrentFyeUsersMapper currentFyeUsersMapper;
+	private UsrGrpMapper usrGrpMapper;
+	@WireVariable
+	private SessionVarsMapper sessionVarsMapper;
 	
 	private boolean adding = false;
 	
@@ -39,7 +44,7 @@ public class IndexVM {
 	@Init
 	public void init() {
 		for (int i = 2017; i < 2030; i++) {
-			years.add(i);
+			fyes.add(new Integer(i));
 		}
 	}
 	
@@ -50,39 +55,26 @@ public class IndexVM {
 	}
 
 	private void setUsers() {
-		users.clear();
-		List<CurrentFyeUsers> current = currentFyeUsersMapper.findAll();
-		for (CurrentFyeUsers currentFyeUsers : current) {
-			users.add(currentFyeUsers.getUsers());
-			if ("Y".equals(currentFyeUsers.getSelected())) {
-				fye = currentFyeUsers.getFye();
-				usr = currentFyeUsers.getUsers();
-			}
+		usrs.clear();
+		List<UsrGrp> current = usrGrpMapper.findAll();
+		for (UsrGrp usr : current) {
+			usrs.add(usr.getUsr());
 		}
-		BindUtils.postGlobalCommand(null, null, "doRefresh", new HashMap<String, Object>());
 	}
 	
 	@NotifyChange({"attributesSet"})
 	@Command
 	public void refresh() throws Exception {
-		if (fye == null || usr == null) {
+		if (!sessionVars.isValid()) {
 			attributesSet = false;
 			return;
 		}
-		currentFyeUsersMapper.deselectAll();
-		currentFyeUsersMapper.updateSelection(newFilter());
+		sessionVarsMapper.clear();
+		sessionVarsMapper.insert(sessionVars);
 		attributesSet = true;
 		BindUtils.postGlobalCommand(null, null, "doRefresh", new HashMap<String, Object>());
 	}
 
-	private CurrentFyeUsers newFilter() {
-		CurrentFyeUsers filter = new CurrentFyeUsers();
-		filter.setSelected("Y");
-		filter.setFye(fye);
-		filter.setUsers(usr);
-		return filter;
-	}
-	
 	@NotifyChange("adding")
 	@Command
 	public void addUser() {
@@ -92,20 +84,18 @@ public class IndexVM {
 	@NotifyChange({"users", "adding", "attributesSet"})
 	@Command
 	public void setUser() throws Exception {
-		if (fye == null || usr == null) {
-			Messagebox.show("Please select a year and user group");
+		if (usrGrp.getGrp() == null || usrGrp.getUsr() == null) {
+			Messagebox.show("Please select a user and group");
 			return;
 		}
-		currentFyeUsersMapper.deselectAll();
-		currentFyeUsersMapper.insert(newFilter());
+		usrGrpMapper.insert(usrGrp);
 		adding = false;
 		setUsers();
 		BindUtils.postGlobalCommand(null, null, "doRefresh", new HashMap<String, Object>());
 	}
-	
-	
-	public List<Integer> getYears() {
-		return years;
+
+	public List<Integer> getFyes() {
+		return fyes;
 	}
 
 
@@ -113,26 +103,22 @@ public class IndexVM {
 		return attributesSet;
 	}
 
-	public List<String> getUsers() {
-		return users;
+	public List<String> getUsrs() {
+		return usrs;
 	}
 
-	public String getUsr() {
-		return usr;
+	public UsrGrp getUsrGrp() {
+		return usrGrp;
 	}
 
-	public void setUsr(String usr) {
-		this.usr = usr;
+	public void setUsrGrp(UsrGrp usrGrp) {
+		this.usrGrp = usrGrp;
 	}
 
-	public Integer getFye() {
-		return fye;
+	public SessionVars getSessionVars() {
+		return sessionVars;
 	}
-
-	public void setFye(Integer fye) {
-		this.fye = fye;
-	}
-
 	
 	
+
 }

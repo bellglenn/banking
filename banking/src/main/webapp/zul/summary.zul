@@ -12,22 +12,12 @@
 				<listbox model="@bind(vm.summaries)" mold="paging"
 					pageSize="10" hflex="max">
 					<listhead>
-						<listheader label="Who" width="150px" />
 						<listheader label="Type" width="200px" />
-						<listheader label="Category" width="200px" />
-						<listheader label="Amount" width="100px" />
-						<listheader label="Tax" width="100px" />
+						<listheader label="Category"  />
+						<listheader label="Amount" align="right"/>
+						<listheader label="Tax" align="right"/>
 					</listhead>
 					<auxhead>
-						<auxheader>
-							<selectbox model="@bind(vm.whos)"
-								selectedItem="@bind(vm.filter.who)"
-								onSelect="@command('refresh')">
-								<template name="model">
-									<label value="@bind(each)" />
-								</template>
-							</selectbox>
-						</auxheader>
 						<auxheader>
 							<selectbox model="@bind(vm.types)"
 								selectedItem="@bind(vm.filter.type)"
@@ -51,11 +41,10 @@
 					</auxhead>
 					<template name="model">
 						<listitem height="28px">
-							<listcell label="@load(each.who)" />
 							<listcell label="@load(each.type)" />
 							<listcell label="@load(each.category)" />
-							<listcell label="@load(each.amount)" />
-							<listcell label="@load(each.tax)" />
+							<listcell label="@load(each.amount) @converter('formatedNumber', format='###,##0')" />
+							<listcell label="@load(each.deductable) @converter('formatedNumber', format='###,##0')" />
 						</listitem>
 					</template>
 				</listbox>

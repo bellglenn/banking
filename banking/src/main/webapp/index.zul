@@ -15,16 +15,16 @@
 				<rows>
 					<row>
 						<label value="Who" />
-						<selectbox model="@bind(vm.users)"
-							selectedItem="@bind(vm.usr)"
+						<selectbox model="@bind(vm.usrs)"
+							selectedItem="@bind(vm.sessionVars.usr)"
 							onSelect="@command('refresh')">
 							<template name="model">
 								<label value="@bind(each)" />
 							</template>
 						</selectbox>
 						<label value="Financial Year" />
-						<selectbox model="@bind(vm.years)"
-							selectedItem="@bind(vm.fye)" onSelect="@command('refresh')">
+						<selectbox model="@bind(vm.fyes)"
+							selectedItem="@bind(vm.sessionVars.fye)" onSelect="@command('refresh')">
 							<template name="model">
 								<label value="@bind(each)" />
 							</template>
@@ -33,10 +33,10 @@
 						<button label="Refresh" onClick ="@command('refresh')" />
 					</row>
 					<row visible="@load(vm.adding)">
-						<label value="Enter a name" />
-						<textbox value="@bind(vm.usr)"/>
-						<label value="Fin Yr End" />
-						<label value="@load(vm.fye)"/>
+						<label value="User" />
+						<textbox value="@bind(vm.usrGrp.usr)"/>
+						<label value="Group" />
+						<textbox value="@bind(vm.usrGrp.grp)"/>
 						<button label="Add" onClick ="@command('setUser')" />
 						<label/>
 					</row>
@@ -47,11 +47,11 @@
 				<tabbox>
 					<tabs visible="true">
 						<tab label="Statements" onSelect="@global-command('doRefresh')"/>
-						<tab label="Transactions" onSelect="@global-command('doRefresh')"/>
-						<tab label="Categories" onSelect="@global-command('doRefresh')"/>
+						<tab label="Transactions"  onSelect="@global-command('doRefresh')"/>
+						<tab label="Categories"  onSelect="@global-command('doRefresh')"/>
 						<tab label="Links" onSelect="@global-command('doRefresh')"/>
 						<tab label="Summary" onSelect="@global-command('doRefresh')"/>
-						<tab label="Users Summary" onSelect="@global-command('doRefresh')"/>
+						<tab label="Group Summary" onSelect="@global-command('doRefresh')"/>
 					</tabs>
 					<tabpanels>
 						<tabpanel>
@@ -70,7 +70,7 @@
 							<include src="zul/summary.zul"></include>
 						</tabpanel>
 						<tabpanel>
-							<include src="zul/usrsum.zul"></include>
+							<include src="zul/group.zul"></include>
 						</tabpanel>
 					</tabpanels>
 				</tabbox>
