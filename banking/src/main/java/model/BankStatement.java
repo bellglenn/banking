@@ -1,6 +1,6 @@
 package model;
 
-public class BankStatement extends SessionVars {
+public class BankStatement extends Session {
 
 	private String bank;
 	private String account;

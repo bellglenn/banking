@@ -21,17 +21,13 @@
 		</license>
 	</licenses>
 	<repositories>
-   <repository>
-     <id>ZK PE/EE Evaluation</id>
-     <url>http://mavensync.zkoss.org/eval/</url>
-   </repository>
-   <!-- 		<repository>
-			<id>ZK CE</id>
-			<name>ZK CE Repository</name>
-			<url>http://mavensync.zkoss.org/maven2</url>
+		<repository>
+			<id>ZK PE/EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/eval/</url>
 		</repository>
-     -->
- 		<repository>
+		<!-- <repository> <id>ZK CE</id> <name>ZK CE Repository</name> <url>http://mavensync.zkoss.org/maven2</url> 
+			</repository> -->
+		<repository>
 			<id>ZK EVAL</id>
 			<name>ZK Evaluation Repository</name>
 			<url>http://mavensync.zkoss.org/eval</url>
@@ -45,11 +41,17 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.22</version>
-        </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.22</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
@@ -96,12 +98,8 @@
 			<artifactId>servlet-api</artifactId>
 			<version>2.5</version>
 		</dependency>
-		<!-- 		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkex</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.zkoss.zk</groupId> <artifactId>zkex</artifactId> 
+			<version>${zk.version}</version> </dependency> -->
 		<dependency>
 			<groupId>oracle.jdbc.pool.OracleDataSource</groupId>
 			<artifactId>dataSource</artifactId>

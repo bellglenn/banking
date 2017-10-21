@@ -1,57 +1,44 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk>
-	<window apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm') @init('viewmodel.IndexVM')" title="The Books" >
+	<window apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('viewmodel.IndexVM')"
+		contentStyle=" background-image:url('images/king.jpeg');" >
 		<vlayout>
-			<grid>
-				<columns>
-					<column width="100px"/>
-					<column width="150px"/>
-					<column width="100px"/>
-					<column width="100px"/>
-					<column width="100px"/>
-					<column width="100px"/>
-				</columns>
-				<rows>
-					<row>
-						<label value="Who" />
-						<selectbox model="@bind(vm.usrs)"
-							selectedItem="@bind(vm.sessionVars.usr)"
-							onSelect="@command('refresh')">
-							<template name="model">
-								<label value="@bind(each)" />
-							</template>
-						</selectbox>
-						<label value="Financial Year" />
-						<selectbox model="@bind(vm.fyes)"
-							selectedItem="@bind(vm.sessionVars.fye)" onSelect="@command('refresh')">
-							<template name="model">
-								<label value="@bind(each)" />
-							</template>
-						</selectbox>
-						<button label="Add User" onClick ="@command('addUser')" />
-						<button label="Refresh" onClick ="@command('refresh')" />
-					</row>
-					<row visible="@load(vm.adding)">
-						<label value="User" />
-						<textbox value="@bind(vm.usrGrp.usr)"/>
-						<label value="Group" />
-						<textbox value="@bind(vm.usrGrp.grp)"/>
-						<button label="Add" onClick ="@command('setUser')" />
-						<label/>
-					</row>
-				</rows>
-			</grid>
-			
-			<vlayout visible="@load(vm.attributesSet)">
-				<tabbox>
-					<tabs visible="true">
-						<tab label="Statements" onSelect="@global-command('doRefresh')"/>
-						<tab label="Transactions"  onSelect="@global-command('doRefresh')"/>
-						<tab label="Categories"  onSelect="@global-command('doRefresh')"/>
-						<tab label="Links" onSelect="@global-command('doRefresh')"/>
-						<tab label="Summary" onSelect="@global-command('doRefresh')"/>
-						<tab label="Group Summary" onSelect="@global-command('doRefresh')"/>
+			<hlayout visible="@load(not vm.loggedIn)">
+				<separator width="100px" />
+				<label value="User" style="font-weight: bold; color:white;" width="50px" />
+				<textbox value="@bind(vm.session.usr)" width="150px" />
+				<label style="font-weight: bold; color:white;" value="Password" width="100px" />
+				<textbox value="@bind(vm.password)" type="password" width="150px" />
+				<button label="Sign In" onClick="@command('signin')" width="100px" />
+			</hlayout>
+			<vlayout visible="@load(vm.loggedIn)">
+				<hlayout>
+					<separator width="100px" />
+					<label value="User" style="font-weight: bold; color:white;" width="50px" />
+					<selectbox model="@bind(vm.usrs)" selectedItem="@bind(vm.session.usr)" onSelect="@command('refresh')" width="100px">
+						<template name="model">
+							<label value="@bind(each)" />
+						</template>
+					</selectbox>
+					<label value="Financial Year" style="font-weight: bold; color:white;" width="150px" />
+					<selectbox model="@bind(vm.fyes)" selectedItem="@bind(vm.session.fye)" onSelect="@command('refresh')">
+						<template name="model">
+							<label value="@bind(each)" />
+						</template>
+					</selectbox>
+					<separator width="400px" />
+					<label style="font-weight: italic; color:white;" value="@bind(vm.status)" width="250px" />
+					<button label="Sign Out" onClick="@command('signout')" width="100px"/>
+					<button image="images/refresh.png" onClick="@command('refresh')" width="50px"/>
+				</hlayout>
+				<tabbox orient="left" visible="@load(vm.loggedIn and vm.attributesSet)">
+					<tabs visible="true" width="100px">
+						<tab label="Statements" onSelect="@command('refresh')" height="70px" />
+						<tab label="Transactions" onSelect="@command('refresh')" height="70px" />
+						<tab label="Categories" onSelect="@command('refresh')" height="70px" />
+						<tab label="Links" onSelect="@command('refresh')" height="70px" tooltiptext="Link between transactions and categories"/>
+						<tab label="Summary" onSelect="@command('refresh')" height="70px" tooltiptext="Totals for types and categories"/>
+						<tab label="Group" onSelect="@command('refresh')" height="70px" tooltiptext="Same as summary for one person groups"/>
 					</tabs>
 					<tabpanels>
 						<tabpanel>

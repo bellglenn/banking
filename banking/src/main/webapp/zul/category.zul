@@ -5,8 +5,10 @@
 		<vlayout>
 			<vlayout visible="@bind(vm.adding)">
 				<hlayout>
-					<button label="List" onClick="@command('list')" />
-					<button label="Insert" onClick="@command('insert')" />
+					<button image="images/back.png"
+						onClick="@command('list')" tooltiptext="Go back to list"/>
+					<button image="images/tick.png"
+						onClick="@command('insert')" tooltiptext="Save"/>
 				</hlayout>
 				<grid>
 					<columns>
@@ -16,11 +18,13 @@
 					<rows>
 						<row>
 							<label value="Name" />
-							<textbox value="@bind(vm.category.category.name)" />
+							<textbox
+								value="@bind(vm.category.category.name)" />
 						</row>
 						<row>
 							<label value="Type" />
-							<textbox value="@bind(vm.category.category.type)" />
+							<textbox
+								value="@bind(vm.category.category.type)" />
 						</row>
 						<row>
 							<label value="Deduction" />
@@ -31,19 +35,21 @@
 				</grid>
 			</vlayout>
 			<vlayout visible="@bind(not vm.adding)">
-				<hlayout>
-					<button label="Add" onClick="@command('add')" />
-					<button label="Refresh"
-						onClick="@command('refresh')" />
-				</hlayout>
 				<listbox
 					model="@bind(vm.categories) @template(each.editingStatus ? 'editable' : 'noneditable')"
-					hflex="true" mold="paging" pageSize="10" height="420px">
+					hflex="true" mold="paging" pageSize="10" >
 					<listhead>
 						<listheader label="Type" />
 						<listheader label="Name" />
-						<listheader label="Deduction" align="right"/>
-						<listheader label="Action" />
+						<listheader label="Deduction" align="right" />
+						<listheader width="150px" align="center">
+							<hlayout>
+								<button image="images/add.png"
+									onClick="@command('add')" tooltiptext="Add new category"/>
+								<button image="images/refresh.png"
+									onClick="@command('refresh')" tooltiptext="Refresh"/>
+							</hlayout>
+						</listheader>
 					</listhead>
 					<auxhead>
 						<auxheader>
@@ -67,11 +73,11 @@
 									value="@load(each.category.deduction) 
 									@save(each.category.deduction, before='confirm')" />
 							</listcell>
-							<listcell>
-								<button label="OK"
-									onClick="@command('confirm', category=each)" />
-								<button label="Cancel"
-									onClick="@command('changeEditableStatus', category=each)" />
+							<listcell >
+								<button image="images/tick.png"
+									onClick="@command('confirm', category=each)" tooltiptext="Save"/>
+								<button image="images/back.png"
+									onClick="@command('changeEditableStatus', category=each)" tooltiptext="Cancel"/>
 							</listcell>
 						</listitem>
 					</template>
@@ -83,10 +89,10 @@
 								label="@bind(each.category.deduction)  @converter('formatedNumber', format='0.0')" />
 							<listcell>
 								<div>
-									<button label="Edit"
-										onClick="@command('changeEditableStatus', category=each)" />
-									<button label="Delete"
-										onClick="@command('delete', category=each)" />
+									<button image="images/edit.png"
+										onClick="@command('changeEditableStatus', category=each)" tooltiptext="Edit"/>
+									<button image="images/delete.png"
+										onClick="@command('delete', category=each)" tooltiptext="Delete"/>
 								</div>
 							</listcell>
 						</listitem>

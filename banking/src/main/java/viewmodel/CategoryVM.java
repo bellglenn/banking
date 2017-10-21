@@ -14,7 +14,6 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Messagebox;
 
 import mappers.CategoryMapper;
-import mappers.SessionVarsMapper;
 import model.Category;
 
 public class CategoryVM extends BaseVM {
@@ -24,8 +23,6 @@ public class CategoryVM extends BaseVM {
 	private ListModelList<CategoryStatus> categories = new ListModelList<>();
 	@WireVariable
 	private CategoryMapper categoryMapper;
-	@WireVariable
-	private SessionVarsMapper sessionVarsMapper;
 	private boolean adding = false;
 	private Set<String> types = new HashSet<>();
 
@@ -103,8 +100,8 @@ public class CategoryVM extends BaseVM {
 		}
 		category.getCategory().setName(category.getCategory().getName().toUpperCase());
 		category.getCategory().setType(category.getCategory().getType().toUpperCase());
-		category.getCategory().setUsr(sessionVarsMapper.getSessionVars().getUsr());
-		category.getCategory().setFye(sessionVarsMapper.getSessionVars().getFye());
+		category.getCategory().setUsr(getSession().getUsr());
+		category.getCategory().setFye(getSession().getFye());
 		categoryMapper.insert(category.getCategory());
 		list();
 	}

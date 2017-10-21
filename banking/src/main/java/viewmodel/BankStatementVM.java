@@ -19,13 +19,10 @@ import org.zkoss.zk.ui.select.annotation.WireVariable;
 import org.zkoss.zul.Messagebox;
 
 import mappers.BankTransactionMapper;
-import mappers.SessionVarsMapper;
 import model.BankStatement;
 import model.BankTransaction;
 
 public class BankStatementVM extends BaseVM {
-
-	public static final String ZUL = "zul/bankStatement.zul";
 
 	private BankStatement statement = new BankStatement();
 	private List<BankStatement> statements = new ArrayList<>();
@@ -33,13 +30,11 @@ public class BankStatementVM extends BaseVM {
 	// NB follow the naming convention to avoid null pointer exceptions
 	@WireVariable
 	BankTransactionMapper bankTransactionMapper;
-	@WireVariable
-	private SessionVarsMapper sessionVarsMapper;
-	
+
 	private File file;
 	private List<BankTransaction> transactions = new ArrayList<BankTransaction>();
 	private boolean inserting = false;
-	
+
 	@AfterCompose
 	public void afterCompose() throws Exception {
 		refresh();
@@ -47,12 +42,15 @@ public class BankStatementVM extends BaseVM {
 
 	@Command
 	public void refresh() throws Exception {
+		if (getSession() == null) {
+			return;
+		}
 		statements.clear();
 		statements.addAll(bankTransactionMapper.getStatements());
 		inserting = false;
 		statement = new BankStatement();
-		statement.setFye(sessionVarsMapper.getSessionVars().getFye());
-		statement.setUsr(sessionVarsMapper.getSessionVars().getUsr());
+		statement.setFye(getSession().getFye());
+		statement.setUsr(getSession().getUsr());
 		transactions.clear();
 		BindUtils.postNotifyChange(null, null, this, "statements");
 		BindUtils.postNotifyChange(null, null, this, "inserting");
@@ -62,7 +60,6 @@ public class BankStatementVM extends BaseVM {
 	public BankStatement getStatement() {
 		return statement;
 	}
-	
 
 	public List<BankStatement> getStatements() {
 		return statements;
@@ -84,12 +81,12 @@ public class BankStatementVM extends BaseVM {
 		return statement.getBank() == null || statement.getAccount() == null;
 	}
 
-	@NotifyChange({"statement", "inserting"})
+	@NotifyChange({ "statement", "inserting" })
 	@Command
 	public void insertStatement() throws Exception {
 		inserting = true;
 	}
-	
+
 	@NotifyChange({ "statements", "statement", "inserting" })
 	@Command
 	public void loadStatement(@BindingParam("evt") UploadEvent evt) throws Exception {
@@ -108,8 +105,8 @@ public class BankStatementVM extends BaseVM {
 		extractTransactions();
 
 		Messagebox.show(
-				"Insert transactions from " + file.getAbsolutePath() + " for "
-						+ statement.getAccount() + " " + statement.getBank() + " ?",
+				"Insert transactions from " + file.getAbsolutePath() + " for " + statement.getAccount() + " "
+						+ statement.getBank() + " ?",
 				"Confirm Dialog", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION, new EventListener<Event>() {
 					@Override
 					public void onEvent(Event evt) throws Exception {
@@ -147,7 +144,7 @@ public class BankStatementVM extends BaseVM {
 					String amt = line[2].replaceFirst("\\$", "").replaceFirst(",", "").trim();
 					bankTransaction.setAmount(new BigDecimal(amt));
 					addTransaction(bankTransaction);
-				} 
+				}
 			}
 			if ("ING".equals(statement.getBank().toUpperCase())) {
 				if (lineCount > 1) {
@@ -166,7 +163,7 @@ public class BankStatementVM extends BaseVM {
 					}
 					bankTransaction.setAmount(new BigDecimal(amt.replaceFirst("\\$", "").replaceFirst(",", "").trim()));
 					addTransaction(bankTransaction);
-				} 
+				}
 			}
 
 		}

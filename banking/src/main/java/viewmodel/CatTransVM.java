@@ -21,7 +21,6 @@ import org.zkoss.zul.Window;
 import mappers.BankTransactionMapper;
 import mappers.CatTransVMapper;
 import mappers.CategoryMapper;
-import mappers.SessionVarsMapper;
 import model.CatTransV;
 import model.Category;
 
@@ -41,8 +40,6 @@ public class CatTransVM extends BaseVM {
 	CategoryMapper categoryMapper;
 	@WireVariable
 	BankTransactionMapper bankTransactionMapper;
-	@WireVariable
-	SessionVarsMapper sessionVarsMapper;
 
 	@Command
 	public void changeEditableStatus(@BindingParam("transaction") CatTransV transaction) {
@@ -96,10 +93,6 @@ public class CatTransVM extends BaseVM {
 		List<CatTransV> list = catTransVMapper.findAll();
 		List<CatTransV> searched = new ArrayList<>();
 		for (CatTransV cat : list) {
-			if (cat.getCategory() == null && cat.getLnkcat() != null) {
-				cat.setCategory(cat.getLnkcat());
-				catTransVMapper.saveCategory(cat);
-			}
 			if (cat.getCategory() != null) {
 				categories.add(cat.getCategory());
 			}
@@ -138,8 +131,8 @@ public class CatTransVM extends BaseVM {
 	public void add() {
 		adding = true;
 		transaction = new CatTransV();
-		transaction.setUsr(sessionVarsMapper.getSessionVars().getUsr());
-		transaction.setFye(sessionVarsMapper.getSessionVars().getFye());
+		transaction.setUsr(getSession().getUsr());
+		transaction.setFye(getSession().getFye());
 		transaction.setAccount("Cash");
 		transaction.setBank("Cash");
 	}

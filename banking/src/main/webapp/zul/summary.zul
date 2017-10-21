@@ -4,47 +4,61 @@
 		viewModel="@id('vm') @init('viewmodel.SummaryVM')">
 		<vlayout>
 			<vlayout>
-				<hlayout>
-					<button label="Refresh"
-						onClick="@command('refresh')" />
-					<button label="Clear" onClick="@command('clear')" />
-				</hlayout>
 				<listbox model="@bind(vm.summaries)" mold="paging"
 					pageSize="10" hflex="max">
 					<listhead>
 						<listheader label="Type" width="200px" />
-						<listheader label="Category"  />
-						<listheader label="Amount" align="right"/>
-						<listheader label="Tax" align="right"/>
+						<listheader label="Category" />
+						<listheader label="Amount" align="right" />
+						<listheader label="Tax" align="right" />
+						<listheader width="150px" align="center">
+							<hlayout>
+								<button image="images/refresh.png"
+									onClick="@command('refresh')" tooltiptext="Refresh"/>
+								<button image="images/download.png"
+									onClick="@command('exportSummary')" tooltiptext="Download"/>
+							</hlayout>
+						</listheader>
 					</listhead>
 					<auxhead>
 						<auxheader>
 							<selectbox model="@bind(vm.types)"
 								selectedItem="@bind(vm.filter.type)"
-								onSelect="@command('refresh')">
+								onSelect="@command('refresh')" hflex="true">
 								<template name="model">
 									<label value="@bind(each)" />
 								</template>
 							</selectbox>
 						</auxheader>
 						<auxheader>
-							<selectbox model="@bind(vm.categories)"
-								selectedItem="@bind(vm.filter.category)"
-								onSelect="@command('refresh')">
-								<template name="model">
-									<label value="@bind(each)" />
-								</template>
-							</selectbox>
+							<hlayout>
+								<selectbox model="@bind(vm.categories)"
+									selectedItem="@bind(vm.filter.category)"
+									onSelect="@command('refresh')" hflex="true">
+									<template name="model">
+										<label value="@bind(each)" />
+									</template>
+								</selectbox>
+							</hlayout>
 						</auxheader>
 						<auxheader />
-						<auxheader/>
+						<auxheader />
+						<auxheader align="center">
+							<hlayout>
+								<button image="images/clear.png"
+									onClick="@command('clear')" tooltiptext="Clear type and category"/>
+							</hlayout>
+						</auxheader>
 					</auxhead>
 					<template name="model">
 						<listitem height="28px">
 							<listcell label="@load(each.type)" />
 							<listcell label="@load(each.category)" />
-							<listcell label="@load(each.amount) @converter('formatedNumber', format='###,##0')" />
-							<listcell label="@load(each.deductable) @converter('formatedNumber', format='###,##0')" />
+							<listcell
+								label="@load(each.amount) @converter('formatedNumber', format='###,##0')" />
+							<listcell
+								label="@load(each.deductable) @converter('formatedNumber', format='###,##0')" />
+							<listcell />
 						</listitem>
 					</template>
 				</listbox>

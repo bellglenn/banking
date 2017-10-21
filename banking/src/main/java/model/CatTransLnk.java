@@ -1,6 +1,6 @@
 package model;
 
-public class CatTransLnk extends SessionVars {
+public class CatTransLnk extends Session {
 	
 	private String category;
 	private String search;

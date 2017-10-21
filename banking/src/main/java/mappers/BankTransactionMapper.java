@@ -32,10 +32,10 @@ public interface BankTransactionMapper {
 	@Delete("delete from bank_transaction where id = #{id}")
 	public void delete(@Param("id") Integer id);
 
-	@Select("select * from transaction_summary")
-	public List<TransactionSummary> summary();
+	@Select("select * from transaction_summary where usr = #{usr}")
+	public List<TransactionSummary> summary(@Param("usr") String usr);
 
-	@Select("select * from group_summary")
-	public List<TransactionSummary> groupSummary();
+	@Select("select * from group_summary  where grp = #{grp}")
+	public List<TransactionSummary> groupSummary(@Param("grp") String grp);
 
 }

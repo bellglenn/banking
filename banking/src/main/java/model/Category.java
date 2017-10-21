@@ -2,7 +2,7 @@ package model;
 
 import java.math.BigDecimal;
 
-public class Category extends SessionVars {
+public class Category extends Session {
 	
 	private String name;
 	private BigDecimal deduction;

@@ -3,13 +3,6 @@
 	<div apply="org.zkoss.bind.BindComposer"
 		viewModel="@id('vm')@init('viewmodel.BankStatementVM')">
 		<vlayout>
-			<hlayout>
-				<button label="Refresh" onClick="@command('refresh')" />
-				<button label="Insert Statement" onClick="@command('insertStatement')" 
-					visible="@load(not vm.inserting)"/>
-				<button label="Upload Statement" upload="true" visible="@load(vm.inserting)"
-					onUpload="@command('loadStatement', evt=event)" disabled="@load(empty vm.statement.account or empty vm.statement.bank)"/>
-			</hlayout>
 			<vlayout visible="@load(vm.inserting)">
 				<radiogroup id="bank"
 					selectedItem="@bind(vm.statement.bank)" />
@@ -21,14 +14,14 @@
 					<rows>
 						<row>
 							<radio id="ra1" label="Suncorp"
-								value="Suncorp" radiogroup="bank" />
+								value="Suncorp" radiogroup="bank" tooltiptext="TODO: load by format"/>
 							<radio id="ra2" label="ING" value="ING"
 								radiogroup="bank" />
 						</row>
 						<row>
 							<label value="Account Name" />
 							<textbox
-								value="@bind(vm.statement.account)" />
+								value="@bind(vm.statement.account)" tooltiptext="eg Bills, Everyday, Savings Maximizer etc"/>
 						</row>
 					</rows>
 				</grid>
@@ -39,15 +32,27 @@
 				<listhead>
 					<listheader label="Bank" />
 					<listheader label="Account" />
-					<listheader label="Action" />
+					<listheader width="150px" align="center">
+						<hlayout>
+							<button image="images/refresh.png"
+								onClick="@command('refresh')" tooltiptext="Refresh"/>
+							<button image="images/add.png"
+								onClick="@command('insertStatement')"
+								visible="@load(not vm.inserting)" tooltiptext="Add statement"/>
+							<button label="Upload Statement"
+								upload="true" visible="@load(vm.inserting)" tooltiptext="Read statement from file"
+								onUpload="@command('loadStatement', evt=event)"
+								disabled="@load(empty vm.statement.account or empty vm.statement.bank)" />
+						</hlayout>
+					</listheader>
 				</listhead>
 				<template name="model">
 					<listitem>
 						<listcell label="@bind(each.bank)" />
 						<listcell label="@bind(each.account)" />
 						<listcell>
-							<button label="Delete"
-								onClick="@command('deleteStatement', statement=each)" />
+							<button image="images/delete.png"
+								onClick="@command('deleteStatement', statement=each)" tooltiptext="Delete" />
 						</listcell>
 					</listitem>
 				</template>

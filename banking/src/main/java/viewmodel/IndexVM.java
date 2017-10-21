@@ -1,20 +1,23 @@
 package viewmodel;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.zkoss.bind.BindUtils;
-import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Messagebox;
 
-import mappers.SessionVarsMapper;
+import mappers.SessionMapper;
 import mappers.UsrGrpMapper;
-import model.SessionVars;
+import model.Session;
 import model.UsrGrp;
 
 public class IndexVM {
@@ -22,24 +25,17 @@ public class IndexVM {
 	private List<Integer> fyes = new ArrayList<>();
 
 	private boolean attributesSet = false;
-	private UsrGrp usrGrp = new UsrGrp();
-	private SessionVars sessionVars = new SessionVars();
-	
-	
+	private UsrGrp user = new UsrGrp();
+	private String previousUser;
+	private Session session = new Session();
+	private boolean loggedIn = false;
+	private String password;
+	private String status;
+
 	@WireVariable
 	private UsrGrpMapper usrGrpMapper;
 	@WireVariable
-	private SessionVarsMapper sessionVarsMapper;
-	
-	private boolean adding = false;
-	
-	public boolean isAdding() {
-		return adding;
-	}
-
-	public void setAdding(boolean adding) {
-		this.adding = adding;
-	}
+	private SessionMapper sessionMapper;
 
 	@Init
 	public void init() {
@@ -47,57 +43,82 @@ public class IndexVM {
 			fyes.add(new Integer(i));
 		}
 	}
-	
-	@AfterCompose
-	public void afterCompose() throws Exception {
-		setUsers();
-		refresh();
-	}
 
-	private void setUsers() {
-		usrs.clear();
-		List<UsrGrp> current = usrGrpMapper.findAll();
-		for (UsrGrp usr : current) {
-			usrs.add(usr.getUsr());
-		}
-	}
-	
-	@NotifyChange({"attributesSet"})
+	@NotifyChange("attributesSet")
 	@Command
 	public void refresh() throws Exception {
-		if (!sessionVars.isValid()) {
+		if (!loggedIn) {
+			return;
+		}
+		usrs.clear();
+		List<UsrGrp> current = usrGrpMapper.findUsersInGroup(user.getGrp());
+		for (UsrGrp curr : current) {
+			usrs.add(curr.getUsr());
+		}
+		BindUtils.postNotifyChange(null, null, this, "usrs");
+
+		if (session.getFye() == null) {
 			attributesSet = false;
 			return;
 		}
-		sessionVarsMapper.clear();
-		sessionVarsMapper.insert(sessionVars);
+		sessionMapper.clearUsr(previousUser);
+		previousUser = session.getUsr();
+		sessionMapper.insert(session);
 		attributesSet = true;
-		BindUtils.postGlobalCommand(null, null, "doRefresh", new HashMap<String, Object>());
+		Map<String, Object> args = new HashMap<String, Object>();
+		args.put(BaseVM.SESSION, session);
+		BindUtils.postGlobalCommand(null, null, "doRefresh", args);
 	}
 
-	@NotifyChange("adding")
 	@Command
-	public void addUser() {
-		adding = true;
+	public void signout() throws Exception {
+		user.setLogon(null);
+		usrGrpMapper.update(user);
+		for (String usr : usrs) {
+			sessionMapper.clearUsr(usr);
+		}
+		user = new UsrGrp();
+		password = null;
+		loggedIn = false;
+		BindUtils.postNotifyChange(null, null, this, "password");
+		BindUtils.postNotifyChange(null, null, this, "user");
+		BindUtils.postNotifyChange(null, null, this, "loggedIn");
 	}
-	
-	@NotifyChange({"users", "adding", "attributesSet"})
+
 	@Command
-	public void setUser() throws Exception {
-		if (usrGrp.getGrp() == null || usrGrp.getUsr() == null) {
-			Messagebox.show("Please select a user and group");
+	public void signup() throws Exception {
+	}
+
+	@Command
+	public void signin() throws Exception {
+		if (session.getUsr() == null || password == null) {
+			Messagebox.show("Please fill in user and password");
 			return;
 		}
-		usrGrpMapper.insert(usrGrp);
-		adding = false;
-		setUsers();
-		BindUtils.postGlobalCommand(null, null, "doRefresh", new HashMap<String, Object>());
+		user = usrGrpMapper.find(session.getUsr());
+		if (user.getPwd() == null) {
+			Messagebox.show("No password for " + session.getUsr() + "?");
+			user.setPwd(password);
+		}
+		if (!password.equals(user.getPwd())) {
+			Messagebox.show("Invalid user or password.");
+			return;
+		}
+		Timestamp time = new Timestamp(System.currentTimeMillis());
+		session.setLogon(time);
+		user.setLogon(time);
+		usrGrpMapper.update(user);
+		previousUser = user.getUsr();
+		loggedIn = true;
+		BindUtils.postNotifyChange(null, null, this, "loggedIn");
+		status = session.getUsr() + " logged in at " + session.getLogon();
+		BindUtils.postNotifyChange(null, null, this, "status");
+		refresh();
 	}
 
 	public List<Integer> getFyes() {
 		return fyes;
 	}
-
 
 	public boolean isAttributesSet() {
 		return attributesSet;
@@ -108,17 +129,27 @@ public class IndexVM {
 	}
 
 	public UsrGrp getUsrGrp() {
-		return usrGrp;
+		return user;
 	}
 
-	public void setUsrGrp(UsrGrp usrGrp) {
-		this.usrGrp = usrGrp;
+	public Session getSession() {
+		return session;
 	}
 
-	public SessionVars getSessionVars() {
-		return sessionVars;
+	public boolean isLoggedIn() {
+		return loggedIn;
 	}
-	
-	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getStatus() {
+		return status;
+	}
 
 }

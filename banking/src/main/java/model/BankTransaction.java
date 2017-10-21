@@ -3,7 +3,7 @@ package model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class BankTransaction extends SessionVars {
+public class BankTransaction extends Session {
 
 	private Integer id;
 	private String account;

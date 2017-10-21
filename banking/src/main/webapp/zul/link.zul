@@ -1,50 +1,60 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk>
 	<div apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm')@init('viewmodel.LinkVM')" >
+		viewModel="@id('vm')@init('viewmodel.LinkVM')">
 		<vlayout hflex="max">
 			<vlayout visible="@bind(vm.adding)">
-				<hlayout>
-					<button label="List" onClick="@command('list')" />
-					<button label="Insert" onClick="@command('insert')" />
-				</hlayout>
 				<grid>
+					<columns>
+						<column width="150px" />
+						<column />
+					</columns>
 					<rows>
-					<row>
-						<label value="Category" />
-		                <selectbox model="@bind(vm.categories)" selectedItem="@bind(vm.category)" >
-		                    <template name="model">
-		                        <label value="@bind(each.name)" />
-		                    </template>
-		                </selectbox>
-					</row>
-					<row>
-						<label value="Search" />
-						<textbox value="@bind(vm.catTransLnk.search)"  hflex="true"/>
-					</row>
+						<row>
+							<label value="Category" />
+							<selectbox model="@bind(vm.categories)"
+								selectedItem="@bind(vm.category)">
+								<template name="model">
+									<label value="@bind(each.name)" />
+								</template>
+							</selectbox>
+						</row>
+						<row>
+							<label value="Search" />
+							<textbox
+								value="@bind(vm.catTransLnk.search)" hflex="true" />
+						</row>
+						<row>
+							<button image="images/back.png"
+								onClick="@command('list')" tooltiptext="Back to list"/>
+							<button image="images/tick.png"
+								onClick="@command('insert')" tooltiptext="Save"/>
+						</row>
 					</rows>
 				</grid>
 			</vlayout>
 			<vlayout visible="@bind(not vm.adding)">
-				<hlayout>
-					<button label="Add" onClick="@command('add')" />
-					<button label="Refresh"
-						onClick="@command('refresh')" />
-				</hlayout>
 				<listbox model="@bind(vm.links)" hflex="true"
-					mold="paging" pageSize="10" height="420px">
+					mold="paging" pageSize="10">
 					<listhead>
-						<listheader label="Category" width="200px"/>
+						<listheader label="Category" width="200px" />
 						<listheader label="Search" />
-						<listheader label="Action" width="100px"/>
+						<listheader width="150px" align="center">
+							<hlayout>
+								<button image="images/back.png"
+									onClick="@command('list')" tooltiptext="Back to list"/>
+								<button image="images/add.png"
+									onClick="@command('add')" tooltiptext="Add"/>
+							</hlayout>
+						</listheader>
 					</listhead>
 					<template name="model">
 						<listitem>
 							<listcell label="@load(each.category)" />
-							<listcell label="@load(each.search)"/>
+							<listcell label="@load(each.search)" />
 							<listcell>
-								<button label="Delete"
-									onClick="@command('delete', catTransLnk=each)" />
+								<button image="images/delete.png"
+									onClick="@command('delete', catTransLnk=each)" tooltiptext="Delete"/>
 							</listcell>
 						</listitem>
 					</template>

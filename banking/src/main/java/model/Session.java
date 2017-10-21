@@ -1,13 +1,20 @@
 package model;
 
-public class SessionVars {
+import java.sql.Timestamp;
+
+public class Session {
 	
 	private Integer fye;
 	private String usr;
-	
-	public boolean isValid() {
-		return fye != null && usr != null;  
+	private Timestamp logon;
+
+	public Timestamp getLogon() {
+		return logon;
 	}
+	public void setLogon(Timestamp logon) {
+		this.logon = logon;
+	}
+	
 	public Integer getFye() {
 		return fye;
 	}
@@ -20,7 +27,4 @@ public class SessionVars {
 	public void setUsr(String usr) {
 		this.usr = usr;
 	}
-	
-	
-
 }

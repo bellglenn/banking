@@ -8,7 +8,7 @@
 					<button label="List" onClick="@command('list')"
 						image="images/back.png" />
 					<button label="Insert" onClick="@command('insert')"
-						image="images/add.png" />
+						image="images/tick.png" />
 				</hlayout>
 				<grid>
 					<columns>
@@ -40,12 +40,6 @@
 				</grid>
 			</vlayout>
 			<vlayout visible="@bind(not vm.adding)">
-				<hlayout>
-					<button onClick="@command('refresh')"
-						image="images/refresh.png" />
-					<button image="images/add.png"
-						onClick="@command('add')" />
-				</hlayout>
 				<listbox
 					model="@bind(vm.transactions) @template(each.editingStatus ? 'editable' : 'noneditable')"
 					mold="paging" pageSize="10" hflex="max">
@@ -57,19 +51,22 @@
 						<listheader label="Amount" sort="auto"
 							width="100px" align="right" />
 						<listheader label="Category" width="250px" />
-						<listheader width="70px" />
+						<listheader width="150px" align="center">
+							<hlayout>
+								<button onClick="@command('refresh')"
+									image="images/refresh.png" tooltiptext="Refresh"/>
+								<button image="images/add.png"
+									onClick="@command('add')" tooltiptext="Add transaction"/>
+							</hlayout>
+						</listheader>
 					</listhead>
 					<auxhead>
 						<auxheader />
 						<auxheader />
 						<auxheader />
 						<auxheader>
-							<div>
-								<textbox
-									value="@bind(vm.filter.description)" hflex="true" />
-								<button label="Search"
-									onClick="@command('refresh')" image="images/refresh.png" />
-							</div>
+							<textbox
+								value="@bind(vm.filter.description)" hflex="true" />
 						</auxheader>
 						<auxheader />
 						<auxheader>
@@ -81,9 +78,11 @@
 								</template>
 							</selectbox>
 						</auxheader>
-						<auxheader>
+						<auxheader align="center">
+							<button image="images/search.png"
+								onClick="@command('refresh')" tooltiptext="Search using filter"/>
 							<button onClick="@command('clear')"
-								image="images/clear.png" />
+								image="images/clear.png" tooltiptext="Clear filter (description and category)"/>
 						</auxheader>
 					</auxhead>
 					<template name="editable">
@@ -112,9 +111,9 @@
 							</listcell>
 							<listcell>
 								<button image="images/tick.png"
-									onClick="@command('confirm', transaction=each)" />
-								<button image="images/delete.png"
-									onClick="@command('changeEditableStatus', transaction=each)" />
+									onClick="@command('confirm', transaction=each)" tooltiptext="Save"/>
+								<button image="images/back.png"
+									onClick="@command('changeEditableStatus', transaction=each)" tooltiptext="Cancel"/>
 							</listcell>
 						</listitem>
 					</template>
@@ -146,8 +145,8 @@
 					</template>
 				</listbox>
 				<hlayout>
-					<label value="Empty transaction categories" />
-					<label value="@load(vm.nullCount)" />
+					<label value="Empty transaction categories" style="font-weight: bold; color:white;"/>
+					<label value="@load(vm.nullCount)" style="font-weight: bold; color:white;"/>
 				</hlayout>
 			</vlayout>
 		</vlayout>

@@ -2,7 +2,7 @@ package model;
 
 import java.math.BigDecimal;
 
-public class TransactionSummary extends SessionVars {
+public class TransactionSummary extends Session {
 	
 	private String type;
 	private String category;
