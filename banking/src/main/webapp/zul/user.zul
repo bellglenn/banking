@@ -1,0 +1,33 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<window border="normal" mode="modal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm')@init('viewmodel.UserVM')" width="500px">
+		<grid>
+			<columns>
+				<column width="150px" />
+				<column />
+			</columns>
+			<rows>
+				<row>
+					<label value="User" width="50px" />
+					<textbox value="@bind(vm.user.usr)" />
+				</row>
+				<row>
+					<label value="Group" width="100px" />
+					<textbox value="@bind(vm.user.grp)" />
+				</row>
+				<row>
+					<label value="Password" width="100px" />
+					<textbox value="@bind(vm.user.pwd)" type="password" />
+				</row>
+				<row>
+					<label value="Confirm" width="100px" />
+					<textbox value="@bind(vm.confirm)" type="password" />
+				</row>
+				<row>
+					<button image="images/tick.png" onClick="@command('add')" tooltiptext="Save" />
+					<button image="images/back.png" onClick="@command('cancel')" tooltiptext="Cancel" />
+				</row>
+			</rows>
+		</grid>
+	</window>
+</zk>

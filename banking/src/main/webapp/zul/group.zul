@@ -1,0 +1,66 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<div apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm') @init('viewmodel.SummaryVM')">
+		<vlayout>
+			<vlayout>
+				<listbox model="@bind(vm.grpSummaries)" mold="paging"
+					pageSize="10" hflex="max">
+					<listhead>
+						<listheader label="Type" width="200px" />
+						<listheader label="Category" />
+						<listheader label="Amount" align="right" />
+						<listheader label="Tax" align="right" />
+						<listheader width="150px" align="center">
+							<hlayout>
+								<button image="images/refresh.png"
+									onClick="@command('refresh')" tooltiptext="Refresh"/>
+								<button image="images/download.png"
+									onClick="@command('exportGroup')" tooltiptext="Download"/>
+							</hlayout>
+						</listheader>
+					</listhead>
+					<auxhead>
+						<auxheader>
+							<selectbox model="@bind(vm.types)"
+								selectedItem="@bind(vm.filter.type)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader>
+							<selectbox model="@bind(vm.categories)"
+								selectedItem="@bind(vm.filter.category)"
+								onSelect="@command('refresh')">
+								<template name="model">
+									<label value="@bind(each)" />
+								</template>
+							</selectbox>
+						</auxheader>
+						<auxheader />
+						<auxheader />
+						<auxheader align="center">
+							<hlayout>
+								<button image="images/clear.png"
+									onClick="@command('clear')" tooltiptext="Clear filter (category, type)"/>
+							</hlayout>
+						</auxheader>
+					</auxhead>
+					<template name="model">
+						<listitem height="28px">
+							<listcell label="@load(each.type)" />
+							<listcell label="@load(each.category)" />
+							<listcell
+								label="@load(each.amount) @converter('formatedNumber', format='###,##0')" />
+							<listcell
+								label="@load(each.deductable) @converter('formatedNumber', format='###,##0')" />
+							<listcell />
+						</listitem>
+					</template>
+				</listbox>
+			</vlayout>
+		</vlayout>
+	</div>
+</zk>

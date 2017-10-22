@@ -1,0 +1,32 @@
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<zk>
+	<window border="normal" mode="modal"
+		apply="org.zkoss.bind.BindComposer"
+		viewModel="@id('vm')@init('viewmodel.CatTransLnkVM')" width="500px">
+		<vlayout>
+			<grid>
+				<rows>
+					<row>
+						<label value="Category" />
+						<selectbox model="@bind(vm.categories)"
+							selectedItem="@bind(vm.category)">
+							<template name="model">
+								<label value="@bind(each.name)" />
+							</template>
+						</selectbox>
+					</row>
+					<row>
+						<label value="Search" />
+						<textbox value="@bind(vm.catTransLnk.search)"
+							hflex="true" />
+					</row>
+					<row>
+						<button image="images/add.png" onClick="@command('add')" tooltiptext="Save"/>
+						<button image="images/delete.png"
+							onClick="@command('cancel')" tooltiptext="Delete"/>
+					</row>
+				</rows>
+			</grid>
+		</vlayout>
+	</window>
+</zk>
