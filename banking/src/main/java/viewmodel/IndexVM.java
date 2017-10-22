@@ -20,7 +20,7 @@ import model.BankTransaction;
 import model.Session;
 import model.User;
 
-public class IndexVM {
+public class IndexVM  {
 	private List<String> usrs = new ArrayList<>();
 	private List<Integer> fyes = new ArrayList<>();
 
