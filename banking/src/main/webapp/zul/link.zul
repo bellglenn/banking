@@ -41,8 +41,8 @@
 						<listheader label="Search" />
 						<listheader width="150px" align="center">
 							<hlayout>
-								<button image="images/back.png"
-									onClick="@command('list')" tooltiptext="Back to list"/>
+								<button image="images/download.png"
+									onClick="@command('download')" tooltiptext="Download"/>
 								<button image="images/add.png"
 									onClick="@command('add')" tooltiptext="Add"/>
 							</hlayout>

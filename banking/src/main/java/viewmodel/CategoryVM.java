@@ -1,6 +1,7 @@
 package viewmodel;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,26 @@ public class CategoryVM extends BaseVM {
 	private boolean adding = false;
 	private Set<String> types = new HashSet<>();
 
+	@Command
+	public void download() throws Exception {
+		String[] HEADER = new String[]{"usr","fye", "category", "search"};
+		export("category", HEADER, cube(categoryMapper.findAll(getSession())));
+	}
+	
+	private List<List<String>> cube(List<Category> list) throws Exception {
+		List<List<String>> rows =  new ArrayList<List<String>>();
+		for (Category item : list) {
+			List<String> row = new ArrayList<String>();
+			row.add(item.getUsr());
+			row.add(String.valueOf(item.getFye()));
+			row.add(item.getName());
+			row.add(item.getType());
+			row.add(String.valueOf(item.getDeduction()));
+			rows.add(row);
+		}
+		return rows;
+	}
+	
 	@Command
 	public void refresh() throws Exception {
 		categories.clear();

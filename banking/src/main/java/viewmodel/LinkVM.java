@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.zkoss.bind.BindUtils;
-import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.BindingParam;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.NotifyChange;
@@ -28,11 +27,25 @@ public class LinkVM extends BaseVM {
 	CategoryMapper categoryMapper;
 	private boolean adding = false;
 	
-	@AfterCompose
-	public void afterCompose() {
-		refresh();
+	@Command
+	public void download() throws Exception {
+		String[] HEADER = new String[]{"usr","fye", "category", "search"};
+		export("link", HEADER, cube(catTransLnkMapper.findAll(getSession())));
 	}
-
+	
+	private List<List<String>> cube(List<CatTransLnk> links) throws Exception {
+		List<List<String>> rows =  new ArrayList<List<String>>();
+		for (CatTransLnk link : links) {
+			List<String> row = new ArrayList<String>();
+			row.add(link.getUsr());
+			row.add(String.valueOf(link.getFye()));
+			row.add(link.getCategory());
+			row.add(link.getSearch());
+			rows.add(row);
+		}
+		return rows;
+	}
+	
 	@Command
 	public void refresh() {
 		links.clear();

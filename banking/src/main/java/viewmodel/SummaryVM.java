@@ -1,6 +1,5 @@
 package viewmodel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,7 +8,6 @@ import java.util.TreeSet;
 import org.zkoss.bind.BindUtils;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Messagebox;
 
 import mappers.BankTransactionMapper;
@@ -40,34 +38,16 @@ public class SummaryVM extends BaseVM {
 	}
 	
 	private static String[] HEADER = new String[]{"usr","fye","type", "category", "amount", "deductable"};
-	
+
 	@Command
 	public void exportSummary() throws Exception {
-		export(makeCsvFileName("summary"), bankTransactionMapper.summary(getSession()));
-	}
-	
-	private String makeCsvFileName(String name) {
-		StringBuilder bob = new StringBuilder();
-		bob.append(System.getProperty("user.home")).append("/Downloads/");
-		bob.append(name).append("_");
-		bob.append(getSession().getUsr());
-		bob.append("_");
-		bob.append(getSession().getFye());
-		bob.append(".csv");
-		return bob.toString();
+		export("summary", HEADER, cube(bankTransactionMapper.summary(getSession())));
 	}
 	
 	@Command
 	public void exportGroup() throws Exception {
 		String grp = userMapper.find(getSession().getUsr()).getGrp();
-		export(makeCsvFileName("group"), bankTransactionMapper.groupSummary(grp, getSession().getFye()));
-	}
-	
-	private void export(String fileName, List<TransactionSummary> list) throws Exception {
-		List<List<String>> rows = cube(list);
-		File file = FileUtil.write(fileName, HEADER, rows);
-		Filedownload.save(file, null);
-		Messagebox.show(file.getAbsolutePath() + " saved");
+		export("group", HEADER, cube(bankTransactionMapper.groupSummary(grp, getSession().getFye())));
 	}
 	
 	private List<List<String>> cube(List<TransactionSummary> summaries) throws Exception {

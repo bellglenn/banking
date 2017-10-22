@@ -28,7 +28,7 @@ public class UserVM {
 	}
 
 	@Command
-	public void add() {
+	public void add() throws Exception {
 		if (user.getUsr() == null) {
 			Messagebox.show("Please enter a user name");
 			return;
@@ -45,6 +45,7 @@ public class UserVM {
 			Messagebox.show("Password and confirm do not match");
 			return;
 		}
+		user.setPwd(EncryptionUtil.encrypt(user.getPwd()));
 		userMapper.insert(user);
 		view.detach();
 	}

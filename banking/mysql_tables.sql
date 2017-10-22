@@ -40,7 +40,17 @@ create table cat_trans_lnk_t (
   foreign key (category, usr, fye) references category_t(name, usr, fye));
   
 create table user_t (
-  grp varchar(20), usr varchar(20) primary key);
+  logon timestamp, pwd varchar(200), grp varchar(20), usr varchar(20) primary key);
+  
+insert into user_t (pwd, grp, usr) values ('Snapper_22', 'Jennie Glenn', 'Jennie');
+insert into user_t (pwd, grp, usr) values ('Snapper_22', 'Jennie Glenn', 'Glenn');
+insert into user_t (pwd, grp, usr) values ('Snapper_22', 'Jennie Glenn', 'Glenn Jennie');
+insert into user_t (pwd, grp, usr) values ('Snapper_22', 'Jackson', 'Jackson');
+insert into user_t (pwd, grp, usr) values ('Snapper_22', 'Geraldine', 'Geraldine');
+
+  
+create or replace view user as select * from user_t order by usr; 
+  
  
 create or replace view bank_transaction  as 
 select * 
@@ -68,7 +78,6 @@ create or replace view group_summary as
 select c.type, t.category, t.fye, u.grp, sum(t.amount) as amount, sum(t.amount*c.deduction) as deductable
 from bank_transaction_t t, category_t c, user_t u
 where t.category = c.name
-and u.grp = (select grp from user_t u2, session_t s where u2.usr = s.usr and u.usr = u2.usr)   
 and u.usr = c.usr
 and c.usr = t.usr
 and c.fye = t.fye 
@@ -86,5 +95,8 @@ grant all PRIVILEGES on banking.cat_trans_lnk_t to bellgl;
 grant all PRIVILEGES on banking.cat_trans_lnk to bellgl;
 grant all PRIVILEGES on banking.transaction_summary to bellgl;
 grant all PRIVILEGES on banking.transaction_summary_grp to bellgl;
+
+select * from user_t;
+
 
  

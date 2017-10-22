@@ -39,7 +39,8 @@
 						<tab label="Categories" onSelect="@command('refresh')" height="70px" />
 						<tab label="Links" onSelect="@command('refresh')" height="70px" tooltiptext="Link between transactions and categories" />
 						<tab label="Summary" onSelect="@command('refresh')" height="70px" tooltiptext="Totals for types and categories" />
-						<tab label="Group" onSelect="@command('refresh')" height="70px" tooltiptext="Same as summary for one person groups" />
+						<tab label="Group" onSelect="@command('refresh')" height="70px" 
+						 visible="@load(vm.groupVisible)" tooltiptext="Same as summary for one person groups" />
 					</tabs>
 					<tabpanels>
 						<tabpanel>
@@ -57,7 +58,7 @@
 						<tabpanel>
 							<include src="zul/summary.zul"></include>
 						</tabpanel>
-						<tabpanel>
+						<tabpanel visible="@load(vm.groupVisible)">
 							<include src="zul/group.zul"></include>
 						</tabpanel>
 					</tabpanels>

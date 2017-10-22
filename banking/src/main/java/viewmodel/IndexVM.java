@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.zkoss.bind.BindUtils;
+import org.zkoss.bind.annotation.AfterCompose;
 import org.zkoss.bind.annotation.Command;
 import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
@@ -30,6 +31,7 @@ public class IndexVM  {
 	private boolean loggedIn = false;
 	private String password;
 	private String status;
+	private boolean groupVisible = false;
 
 	@WireVariable
 	private UserMapper userMapper;
@@ -40,8 +42,13 @@ public class IndexVM  {
 			fyes.add(new Integer(i));
 		}
 	}
+	
+	@AfterCompose
+	public void afterCompose() throws Exception {
+		refresh();
+	}
 
-	@NotifyChange("attributesSet")
+	@NotifyChange({"attributesSet", "groupVisible"})
 	@Command
 	public void refresh() throws Exception {
 		if (!loggedIn) {
@@ -49,6 +56,7 @@ public class IndexVM  {
 		}
 		usrs.clear();
 		List<User> current = userMapper.findUsersForGroup(user.getGrp());
+		groupVisible = current.size() > 1;
 		for (User curr : current) {
 			usrs.add(curr.getUsr());
 		}
@@ -99,7 +107,7 @@ public class IndexVM  {
 			Messagebox.show("No password for " + session.getUsr() + "?");
 			user.setPwd(password);
 		}
-		if (!password.equals(user.getPwd())) {
+		if (!EncryptionUtil.encrypt(password).equals(user.getPwd())) {
 			Messagebox.show("Invalid user or password.");
 			return;
 		}
@@ -108,7 +116,7 @@ public class IndexVM  {
 		userMapper.update(user);
 		loggedIn = true;
 		BindUtils.postNotifyChange(null, null, this, "loggedIn");
-		status = session.getUsr() + " logged in at " + time;
+		status = session.getUsr() + " logged in " + time;
 		BindUtils.postNotifyChange(null, null, this, "status");
 		refresh();
 	}
@@ -143,6 +151,10 @@ public class IndexVM  {
 
 	public String getStatus() {
 		return status;
+	}
+
+	public boolean isGroupVisible() {
+		return groupVisible;
 	}
 
 }
