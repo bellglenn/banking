@@ -29,7 +29,7 @@ public class CategoryVM extends BaseVM {
 	@Command
 	public void refresh() throws Exception {
 		categories.clear();
-		List<Category> list = categoryMapper.findAll();
+		List<Category> list = categoryMapper.findAll(getSession());
 		for (Category category : list) {
 			if (type == null) {
 				categories.add(new CategoryStatus(category, false));

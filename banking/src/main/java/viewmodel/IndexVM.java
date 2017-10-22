@@ -12,30 +12,27 @@ import org.zkoss.bind.annotation.Init;
 import org.zkoss.bind.annotation.NotifyChange;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.select.annotation.WireVariable;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Window;
 
-import mappers.SessionMapper;
-import mappers.UsrGrpMapper;
+import mappers.UserMapper;
+import model.BankTransaction;
 import model.Session;
-import model.UsrGrp;
+import model.User;
 
 public class IndexVM {
 	private List<String> usrs = new ArrayList<>();
 	private List<Integer> fyes = new ArrayList<>();
 
 	private boolean attributesSet = false;
-	private UsrGrp user = new UsrGrp();
-	private String previousUser;
+	private User user = new User();
 	private Session session = new Session();
 	private boolean loggedIn = false;
 	private String password;
 	private String status;
 
 	@WireVariable
-	private UsrGrpMapper usrGrpMapper;
-	@WireVariable
-	private SessionMapper sessionMapper;
+	private UserMapper userMapper;
 
 	@Init
 	public void init() {
@@ -51,8 +48,8 @@ public class IndexVM {
 			return;
 		}
 		usrs.clear();
-		List<UsrGrp> current = usrGrpMapper.findUsersInGroup(user.getGrp());
-		for (UsrGrp curr : current) {
+		List<User> current = userMapper.findUsersForGroup(user.getGrp());
+		for (User curr : current) {
 			usrs.add(curr.getUsr());
 		}
 		BindUtils.postNotifyChange(null, null, this, "usrs");
@@ -61,32 +58,31 @@ public class IndexVM {
 			attributesSet = false;
 			return;
 		}
-		sessionMapper.clearUsr(previousUser);
-		previousUser = session.getUsr();
-		sessionMapper.insert(session);
-		attributesSet = true;
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put(BaseVM.SESSION, session);
 		BindUtils.postGlobalCommand(null, null, "doRefresh", args);
+		attributesSet = true;
 	}
 
 	@Command
 	public void signout() throws Exception {
 		user.setLogon(null);
-		usrGrpMapper.update(user);
-		for (String usr : usrs) {
-			sessionMapper.clearUsr(usr);
-		}
-		user = new UsrGrp();
+		userMapper.update(user);
+		user = new User();
 		password = null;
 		loggedIn = false;
+		session.setUsr(null);
+		BindUtils.postNotifyChange(null, null, this, "session");
 		BindUtils.postNotifyChange(null, null, this, "password");
 		BindUtils.postNotifyChange(null, null, this, "user");
 		BindUtils.postNotifyChange(null, null, this, "loggedIn");
 	}
 
 	@Command
-	public void signup() throws Exception {
+	public void signup() {
+		Map<String, BankTransaction> map = new HashMap<>();
+		final Window dialog = (Window) Executions.createComponents("zul/user.zul", null, null);
+		dialog.doModal();
 	}
 
 	@Command
@@ -95,7 +91,10 @@ public class IndexVM {
 			Messagebox.show("Please fill in user and password");
 			return;
 		}
-		user = usrGrpMapper.find(session.getUsr());
+		user = userMapper.find(session.getUsr());
+		if (user == null) {
+			Messagebox.show("User \"" + session.getUsr() + " not found.");
+		}
 		if (user.getPwd() == null) {
 			Messagebox.show("No password for " + session.getUsr() + "?");
 			user.setPwd(password);
@@ -105,13 +104,11 @@ public class IndexVM {
 			return;
 		}
 		Timestamp time = new Timestamp(System.currentTimeMillis());
-		session.setLogon(time);
 		user.setLogon(time);
-		usrGrpMapper.update(user);
-		previousUser = user.getUsr();
+		userMapper.update(user);
 		loggedIn = true;
 		BindUtils.postNotifyChange(null, null, this, "loggedIn");
-		status = session.getUsr() + " logged in at " + session.getLogon();
+		status = session.getUsr() + " logged in at " + time;
 		BindUtils.postNotifyChange(null, null, this, "status");
 		refresh();
 	}
@@ -126,10 +123,6 @@ public class IndexVM {
 
 	public List<String> getUsrs() {
 		return usrs;
-	}
-
-	public UsrGrp getUsrGrp() {
-		return user;
 	}
 
 	public Session getSession() {

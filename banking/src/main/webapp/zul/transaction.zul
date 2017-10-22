@@ -1,7 +1,7 @@
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 <zk>
 	<div apply="org.zkoss.bind.BindComposer"
-		viewModel="@id('vm')@init('viewmodel.CatTransVM')">
+		viewModel="@id('vm')@init('viewmodel.TransactionVM')">
 		<vlayout>
 			<vlayout visible="@bind(vm.adding)">
 				<hlayout>
@@ -19,18 +19,18 @@
 						<row>
 							<label value="Description" />
 							<textbox
-								value="@bind(vm.transaction.description)" />
+								value="@bind(vm.transaction.transaction.description)" />
 						</row>
 						<row>
 							<label value="Amount" />
 							<decimalbox
-								value="@bind(vm.transaction.amount)" />
+								value="@bind(vm.transaction.transaction.amount)" />
 						</row>
 						<row>
 							<label value="Category" />
 							<selectbox model="@bind(vm.allCategories)"
-								selectedItem="@load(vm.transaction.category) 
-									@save(vm.transaction.category, before='insert')">
+								selectedItem="@load(vm.transaction.transaction.category) 
+									@save(vm.transaction.transaction.category, before='insert')">
 								<template name="model">
 									<label value="@bind(each)" />
 								</template>
@@ -87,15 +87,15 @@
 					</auxhead>
 					<template name="editable">
 						<listitem height="28px">
-							<listcell label="@load(each.bank)" />
-							<listcell label="@load(each.account)" />
+							<listcell label="@load(each.transaction.bank)" />
+							<listcell label="@load(each.transaction.account)" />
 							<listcell>
 								<label
-									value="@load(each.tdate) @converter('formatedDate', format='dd/MM/yyyy')" />
+									value="@load(each.transaction.tdate) @converter('formatedDate', format='dd/MM/yyyy')" />
 							</listcell>
-							<listcell label="@load(each.description)" />
+							<listcell label="@load(each.transaction.description)" />
 							<listcell
-								label="@load(each.amount) @converter('formatedNumber', format='###,###0')" />
+								label="@load(each.transaction.amount) @converter('formatedNumber', format='###,###0')" />
 							<listcell>
 								<hlayout>
 									<selectbox
@@ -119,22 +119,22 @@
 					</template>
 					<template name="noneditable">
 						<listitem height="28px">
-							<listcell label="@load(each.bank)" />
-							<listcell label="@load(each.account)" />
+							<listcell label="@load(each.transaction.bank)" />
+							<listcell label="@load(each.transaction.account)" />
 							<listcell>
 								<label
-									value="@load(each.tdate) @converter('formatedDate', format='dd/MM/yyyy')" />
+									value="@load(each.transaction.tdate) @converter('formatedDate', format='dd/MM/yyyy')" />
 							</listcell>
-							<listcell label="@load(each.description)" />
+							<listcell label="@load(each.transaction.description)" />
 							<listcell
-								label="@load(each.amount) @converter('formatedNumber', format='###,###0')" />
+								label="@load(each.transaction.amount) @converter('formatedNumber', format='###,###0')" />
 							<listcell>
 								<div>
 									<button label="Link"
 										onClick="@command('addLink', transaction=each)"
-										visible="@load(empty each.category)" />
-									<label value="@load(each.category)"
-										visible="@load(not empty each.category)" />
+										visible="@load(empty each.transaction.category)" />
+									<label value="@load(each.transaction.category)"
+										visible="@load(not empty each.transaction.category)" />
 								</div>
 							</listcell>
 							<listcell>

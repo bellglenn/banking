@@ -36,9 +36,9 @@ public class LinkVM extends BaseVM {
 	@Command
 	public void refresh() {
 		links.clear();
-		links.addAll(catTransLnkMapper.findAll());
+		links.addAll(catTransLnkMapper.findAll(getSession()));
 		categories.clear();
-		categories.addAll(categoryMapper.findAll());
+		categories.addAll(categoryMapper.findAll(getSession()));
 		BindUtils.postNotifyChange(null, null, this, "links");
 		BindUtils.postNotifyChange(null, null, this, "categories");
 	}

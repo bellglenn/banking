@@ -46,7 +46,7 @@ public class BankStatementVM extends BaseVM {
 			return;
 		}
 		statements.clear();
-		statements.addAll(bankTransactionMapper.getStatements());
+		statements.addAll(bankTransactionMapper.getStatements(getSession()));
 		inserting = false;
 		statement = new BankStatement();
 		statement.setFye(getSession().getFye());
@@ -74,7 +74,7 @@ public class BankStatementVM extends BaseVM {
 		}
 		bankTransactionMapper.deleteStatement(statement);
 		statements.clear();
-		statements.addAll(bankTransactionMapper.getStatements());
+		statements.addAll(bankTransactionMapper.getStatements(getSession()));
 	}
 
 	private boolean invalidStatement(BankStatement statement) {

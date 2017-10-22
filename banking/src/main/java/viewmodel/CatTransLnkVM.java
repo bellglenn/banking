@@ -15,11 +15,11 @@ import org.zkoss.zul.Messagebox;
 
 import mappers.CatTransLnkMapper;
 import mappers.CategoryMapper;
+import model.BankTransaction;
 import model.CatTransLnk;
-import model.CatTransV;
 import model.Category;
 
-public class CatTransLnkVM {
+public class CatTransLnkVM extends BaseVM {
 
 	private CatTransLnk catTransLnk = new CatTransLnk();
 	private List<Category> categories = new ArrayList<>();
@@ -33,7 +33,7 @@ public class CatTransLnkVM {
 	private Component view;
 
 	@Init
-	public void init(@ExecutionArgParam("transaction") CatTransV transaction) {
+	public void init(@ExecutionArgParam("transaction") BankTransaction transaction) {
 		catTransLnk.setSearch(transaction.getDescription());
 		catTransLnk.setFye(transaction.getFye());
 		catTransLnk.setUsr(transaction.getUsr());
@@ -43,7 +43,7 @@ public class CatTransLnkVM {
 	public void afterCompose(@ContextParam(ContextType.VIEW) Component view) throws Exception {
 		this.view = view;
 		categories.clear();
-		categories.addAll(categoryMapper.findAll());
+		categories.addAll(categoryMapper.findAll(getSession()));
 	}
 
 	@Command
@@ -76,6 +76,12 @@ public class CatTransLnkVM {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	@Override
+	public void refresh() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

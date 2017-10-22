@@ -8,11 +8,12 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import model.Category;
+import model.Session;
 
 public interface CategoryMapper {
 
-	@Select("SELECT * FROM category")
-	public List<Category> findAll();
+	@Select("SELECT * FROM category where fye = #{fye} and usr = #{usr}")
+	public List<Category> findAll(Session session);
 	
 	@Insert("INSERT INTO category (name, deduction, type, usr, fye)\r\n" + 
 			"        VALUES (#{name}, #{deduction}, #{type}, #{usr}, #{fye})")

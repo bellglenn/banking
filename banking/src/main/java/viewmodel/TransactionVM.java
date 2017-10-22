@@ -19,51 +19,48 @@ import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Window;
 
 import mappers.BankTransactionMapper;
-import mappers.CatTransVMapper;
 import mappers.CategoryMapper;
-import model.CatTransV;
+import model.BankTransaction;
 import model.Category;
 
-public class CatTransVM extends BaseVM {
+public class TransactionVM extends BaseVM {
 
-	private List<CatTransV> transactions = new ArrayList<>();
-	private CatTransV transaction;
+	private List<TransactionStatus> transactions = new ArrayList<>();
+	private TransactionStatus transaction;
 	private int nullCount = 0;
 	private boolean adding = false;
 	private Set<String> categories = new TreeSet<>();
 	private Set<String> allCategories = new TreeSet<>();
-	private CatTransV filter = new CatTransV();
+	private BankTransaction filter = new BankTransaction();
 
-	@WireVariable
-	CatTransVMapper catTransVMapper;
 	@WireVariable
 	CategoryMapper categoryMapper;
 	@WireVariable
 	BankTransactionMapper bankTransactionMapper;
 
 	@Command
-	public void changeEditableStatus(@BindingParam("transaction") CatTransV transaction) {
+	public void changeEditableStatus(@BindingParam("transaction") TransactionStatus transaction) {
 		transaction.setEditingStatus(!transaction.isEditingStatus());
 		refreshRowTemplate(transaction);
 	}
 
 	@Command
-	public void confirm(@BindingParam("transaction") CatTransV transaction) {
+	public void confirm(@BindingParam("transaction") TransactionStatus transaction) {
 		changeEditableStatus(transaction);
-		bankTransactionMapper.delete(transaction.getId());
-		bankTransactionMapper.insert(transaction);
+		bankTransactionMapper.delete(transaction.getTransaction().getId());
+		bankTransactionMapper.insert(transaction.getTransaction());
 		refreshRowTemplate(transaction);
 	}
 
-	public void refreshRowTemplate(CatTransV transaction) {
+	public void refreshRowTemplate(TransactionStatus transaction) {
 		transactions.set(transactions.indexOf(transaction), transaction);
 		BindUtils.postNotifyChange(null, null, this, "transactions");
 	}
 
 	@Command
-	public void addLink(@BindingParam("transaction") CatTransV transaction) throws Exception {
-		Map<String, CatTransV> map = new HashMap<>();
-		map.put("transaction", transaction);
+	public void addLink(@BindingParam("transaction") TransactionStatus transaction) throws Exception {
+		Map<String, BankTransaction> map = new HashMap<>();
+		map.put("transaction", transaction.getTransaction());
 		final Window dialog = (Window) Executions.createComponents("zul/catTransLnk.zul", null, map);
 		dialog.doModal();
 		refresh();
@@ -71,47 +68,49 @@ public class CatTransVM extends BaseVM {
 
 	@Command
 	public void clear() throws Exception {
-		filter = new CatTransV();
+		filter = new BankTransaction();
 		BindUtils.postNotifyChange(null, null, this, "filter");
 		refresh();
 	}
 
 	@Command
-	public void clearCat(@BindingParam("transaction") CatTransV transaction) throws Exception {
-		transaction.setCategory(null);
-		catTransVMapper.saveCategory(transaction);
+	public void clearCat(@BindingParam("transaction") TransactionStatus transaction) throws Exception {
+		transaction.getTransaction().setCategory(null);
+		bankTransactionMapper.update(transaction.getTransaction());
 		refresh();
 	}
 
 	@Command
 	public void refresh() throws Exception {
-		List<Category> cats = categoryMapper.findAll();
+		List<Category> cats = categoryMapper.findAll(getSession());
 		for (Category category : cats) {
 			allCategories.add(category.getName());
 		}
 		categories.clear();
-		List<CatTransV> list = catTransVMapper.findAll();
-		List<CatTransV> searched = new ArrayList<>();
-		for (CatTransV cat : list) {
-			if (cat.getCategory() != null) {
-				categories.add(cat.getCategory());
+		List<BankTransaction> list = bankTransactionMapper.findAll(getSession());
+		List<TransactionStatus> searched = new ArrayList<>();
+		for (BankTransaction transaction : list) {
+			TransactionStatus transactionStatus = new TransactionStatus();
+			transactionStatus.setTransaction(transaction);
+			if (transaction.getCategory() != null) {
+				categories.add(transaction.getCategory());
 			}
 			if (filter.getCategory() == null && filter.getDescription() == null) {
-				searched.add(cat);
+				searched.add(transactionStatus);
 			} else {
 				if (((filter.getCategory() != null
-						&& StringUtils.equals(cat.getCategory(), filter.getCategory()))
+						&& StringUtils.equals(transaction.getCategory(), filter.getCategory()))
 						|| filter.getCategory() == null)
 						&& ((filter.getDescription() != null
-								&& StringUtils.contains(cat.getDescription(), filter.getDescription()))
+								&& StringUtils.contains(transaction.getDescription(), filter.getDescription()))
 								|| filter.getDescription() == null)) {
-					searched.add(cat);
+					searched.add(transactionStatus);
 				}
 			}
 		}
 		transactions.clear();
 		transactions.addAll(searched);
-		nullCount = catTransVMapper.getNullCategoryCount();
+		nullCount = bankTransactionMapper.getNullCategoryCount();
 		BindUtils.postNotifyChange(null, null, this, "transactions");
 		BindUtils.postNotifyChange(null, null, this, "nullCount");
 		BindUtils.postNotifyChange(null, null, this, "categories");
@@ -130,24 +129,25 @@ public class CatTransVM extends BaseVM {
 	@Command
 	public void add() {
 		adding = true;
-		transaction = new CatTransV();
-		transaction.setUsr(getSession().getUsr());
-		transaction.setFye(getSession().getFye());
-		transaction.setAccount("Cash");
-		transaction.setBank("Cash");
+		transaction = new TransactionStatus();
+		transaction.getTransaction().setUsr(getSession().getUsr());
+		transaction.getTransaction().setFye(getSession().getFye());
+		transaction.getTransaction().setAccount("Cash");
+		transaction.getTransaction().setBank("Cash");
 	}
 
 	@NotifyChange("adding")
 	@Command
 	public void insert() throws Exception {
-		if (transaction.getAccount() == null || transaction.getDescription() == null || transaction.getAmount() == null
-				|| transaction.getCategory() == null) {
+		if (transaction.getTransaction().getAccount() == null 
+				|| transaction.getTransaction().getDescription() == null || transaction.getTransaction().getAmount() == null
+				|| transaction.getTransaction().getCategory() == null) {
 			Messagebox.show("Please fill in name, fin year, description and amount");
 			return;
 		}
-		transaction.setTdate(new SimpleDateFormat("dd/MM/yyyy").parse("30/06/" + transaction.getFye()));
-		transaction.setAmount(transaction.getAmount().negate());
-		bankTransactionMapper.insert(transaction);
+		transaction.getTransaction().setTdate(new SimpleDateFormat("dd/MM/yyyy").parse("30/06/" + transaction.getTransaction().getFye()));
+		transaction.getTransaction().setAmount(transaction.getTransaction().getAmount().negate());
+		bankTransactionMapper.insert(transaction.getTransaction());
 		list();
 	}
 
@@ -155,11 +155,11 @@ public class CatTransVM extends BaseVM {
 		return adding;
 	}
 
-	public CatTransV getTransaction() {
+	public TransactionStatus getTransaction() {
 		return transaction;
 	}
 
-	public List<CatTransV> getTransactions() {
+	public List<TransactionStatus> getTransactions() {
 		return transactions;
 	}
 
@@ -171,7 +171,7 @@ public class CatTransVM extends BaseVM {
 		return categories;
 	}
 
-	public CatTransV getFilter() {
+	public BankTransaction getFilter() {
 		return filter;
 	}
 

@@ -14,7 +14,7 @@ import org.zkoss.zul.Messagebox;
 
 import mappers.BankTransactionMapper;
 import mappers.CategoryMapper;
-import mappers.UsrGrpMapper;
+import mappers.UserMapper;
 import model.Category;
 import model.TransactionSummary;
 
@@ -25,7 +25,7 @@ public class SummaryVM extends BaseVM {
 	@WireVariable
 	private CategoryMapper categoryMapper;
 	@WireVariable
-	private UsrGrpMapper usrGrpMapper;
+	private UserMapper userMapper;
 	private List<TransactionSummary> summaries = new ArrayList<>();
 	private List<TransactionSummary> grpSummaries = new ArrayList<>();
 	private Set<String> types = new TreeSet<>();
@@ -43,7 +43,7 @@ public class SummaryVM extends BaseVM {
 	
 	@Command
 	public void exportSummary() throws Exception {
-		export(makeCsvFileName("summary"), bankTransactionMapper.summary(getSession().getUsr()));
+		export(makeCsvFileName("summary"), bankTransactionMapper.summary(getSession()));
 	}
 	
 	private String makeCsvFileName(String name) {
@@ -59,8 +59,8 @@ public class SummaryVM extends BaseVM {
 	
 	@Command
 	public void exportGroup() throws Exception {
-		String grp = usrGrpMapper.find(getSession().getUsr()).getGrp();
-		export(makeCsvFileName("group"), bankTransactionMapper.summary(grp));
+		String grp = userMapper.find(getSession().getUsr()).getGrp();
+		export(makeCsvFileName("group"), bankTransactionMapper.groupSummary(grp, getSession().getFye()));
 	}
 	
 	private void export(String fileName, List<TransactionSummary> list) throws Exception {
@@ -90,7 +90,7 @@ public class SummaryVM extends BaseVM {
 	public void refresh() throws Exception {
 		types.clear();
 		categories.clear();
-		List<Category> list = categoryMapper.findAll();
+		List<Category> list = categoryMapper.findAll(getSession());
 		for (Category category : list) {
 			types.add(category.getType());
 			categories.add(category.getName());
@@ -100,9 +100,10 @@ public class SummaryVM extends BaseVM {
 			Messagebox.show("wtf session is null");
 			return;
 		}
-		summaries.addAll(filter(bankTransactionMapper.summary(getSession().getUsr()), filter));
+		summaries.addAll(filter(bankTransactionMapper.summary(getSession()), filter));
 		grpSummaries.clear();
-		grpSummaries.addAll(filter(bankTransactionMapper.groupSummary(usrGrpMapper.find(getSession().getUsr()).getGrp()), filter));
+		String grp = userMapper.find(getSession().getUsr()).getGrp();
+		grpSummaries.addAll(filter(bankTransactionMapper.groupSummary(grp, getSession().getFye()), filter));
 		BindUtils.postNotifyChange(null,  null,  this,  "types");
 		BindUtils.postNotifyChange(null,  null,  this,  "categories");
 		BindUtils.postNotifyChange(null,  null,  this,  "summaries");
